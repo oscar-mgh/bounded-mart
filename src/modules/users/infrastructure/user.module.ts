@@ -16,7 +16,7 @@ import { BcryptHasher } from './security/bcrypt-hasher';
 
 @Module({
   imports: [
-    PassportModule.register({ defaultStrategy: 'jwt', strategies: [JwtStrategy] }),
+    PassportModule.register({ defaultStrategy: 'jwt' }),
     JwtModule.registerAsync({
       useFactory: (configService: ConfigService) => ({
         secret: configService.get<string>('JWT_SECRET') || 'secret',
@@ -40,8 +40,9 @@ import { BcryptHasher } from './security/bcrypt-hasher';
       useClass: BcryptHasher,
     },
     TokenService,
+    JwtStrategy
   ],
   controllers: [AuthController],
-  exports: [UserRepositoryPort],
+  exports: [UserRepositoryPort, PassportModule, JwtModule],
 })
 export class UserModule { }

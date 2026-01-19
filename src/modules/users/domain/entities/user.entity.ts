@@ -19,6 +19,7 @@ export class User {
       throw new Error('Invalid username');
     if (!email.val.includes('@')) throw new Error('Invalid email');
   }
+  
   public getUsername(): string {
     return this.username;
   }

@@ -2,7 +2,6 @@ import { ConflictException, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Page } from 'src/modules/shared/pagination/page.model';
-import { v4 as uuidv4 } from 'uuid';
 import { Product } from '../../../domain/entities/product.entity';
 import { ProductRepositoryPort } from '../../../domain/ports/product-repository.port';
 import { ProductDocument } from '../entities/product.schema';
@@ -55,7 +54,6 @@ export class MongooseProductRepository implements ProductRepositoryPort {
     async save(product: Product): Promise<Product> {
         try {
             const persistenceData = ProductMapper.toPersistence(product);
-            persistenceData.sku = uuidv4();
             const doc = await this.productModel.findByIdAndUpdate(
                 persistenceData._id,
                 persistenceData,

@@ -1,6 +1,8 @@
 import { HttpStatus, ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
+import { HttpExceptionFilter } from './modules/shared/infrastructure/filters/http-exception.filter';
+import { LoggerInterceptor } from './modules/shared/infrastructure/interceptors/logger.interceptor';
 
 async function bootstrap() {
   const port = process.env.API_PORT ?? 3000;
@@ -17,6 +19,8 @@ async function bootstrap() {
       errorHttpStatusCode: HttpStatus.BAD_REQUEST,
     }),
   );
+  app.useGlobalFilters(new HttpExceptionFilter());
+  app.useGlobalInterceptors(new LoggerInterceptor());
 
   await app.listen(port);
 }

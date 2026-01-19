@@ -1,12 +1,8 @@
 export class Sku {
-  private readonly value: string;
-
-  constructor(value: string) {
-    const skuPattern = /^PROD-\d+$/;
-    if (!skuPattern.test(value)) {
-      throw new Error('Invalid SKU: Must follow the pattern PROD-123');
+  constructor(private readonly value: string) {
+    if (!this.value || this.value.length < 4) {
+      throw new Error('Invalid SKU: String is too short or empty');
     }
-    this.value = value.toUpperCase();
   }
 
   get val(): string {

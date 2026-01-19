@@ -1,5 +1,5 @@
 import { Sku } from 'src/modules/catalog/domain/value-objects/sku.vo';
-import { Id } from 'src/shared/domain/value-objects/id.vo';
+import { Id } from 'src/modules/shared/domain/value-objects/id.vo';
 
 export class Product {
   constructor(

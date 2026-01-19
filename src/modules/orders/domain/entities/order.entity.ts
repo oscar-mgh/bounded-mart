@@ -1,4 +1,4 @@
-import { Id } from 'src/shared/domain/value-objects/id.vo';
+import { Id } from 'src/modules/shared/domain/value-objects/id.vo';
 import { OrderItem } from './order-item.entity';
 
 enum OrderStatus {

@@ -1,0 +1,47 @@
+import { Module } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
+import { JwtModule } from '@nestjs/jwt';
+import { MongooseModule } from '@nestjs/mongoose';
+import { PassportModule } from '@nestjs/passport';
+import { LoginUseCase } from '../application/use-cases/login-user.use-case';
+import { RegisterUserUseCase } from '../application/use-cases/register-user.use-case';
+import { PasswordHasherPort } from '../domain/ports/password-hasher.port';
+import { UserRepositoryPort } from '../domain/ports/user-repository.port';
+import { TokenService } from './auth/services/token.service';
+import { JwtStrategy } from './auth/strategies/jwt.strategy';
+import { AuthController } from './controllers/auth.controller';
+import { UserDocument, UserSchema } from './persistance/entities/user.schema';
+import { MongooseUserRepository } from './persistance/repositories/mongoose-user.repository';
+import { BcryptHasher } from './security/bcrypt-hasher';
+
+@Module({
+  imports: [
+    PassportModule.register({ defaultStrategy: 'jwt', strategies: [JwtStrategy] }),
+    JwtModule.registerAsync({
+      useFactory: (configService: ConfigService) => ({
+        secret: configService.get<string>('JWT_SECRET') || 'secret',
+        signOptions: { expiresIn: configService.get<number>('JWT_EXPIRES_IN') || '24h' },
+      }),
+      inject: [ConfigService],
+    }),
+    MongooseModule.forFeature([
+      { name: UserDocument.name, schema: UserSchema },
+    ]),
+  ],
+  providers: [
+    RegisterUserUseCase,
+    LoginUseCase,
+    {
+      provide: UserRepositoryPort,
+      useClass: MongooseUserRepository,
+    },
+    {
+      provide: PasswordHasherPort,
+      useClass: BcryptHasher,
+    },
+    TokenService,
+  ],
+  controllers: [AuthController],
+  exports: [UserRepositoryPort],
+})
+export class UserModule { }

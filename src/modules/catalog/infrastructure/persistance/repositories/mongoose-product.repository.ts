@@ -82,6 +82,6 @@ export class MongooseProductRepository implements ProductRepositoryPort {
 
 
     async delete(id: string): Promise<void> {
-        await this.productModel.findByIdAndUpdate(id, { active: false }).exec();
+        await this.productModel.findByIdAndUpdate({ _id: id, active: true }, { active: false }).exec();
     }
 }

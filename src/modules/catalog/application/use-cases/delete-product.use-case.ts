@@ -12,6 +12,7 @@ export class DeleteProductUseCase {
             throw new NotFoundException(`Product with ID ${id} not found`);
         }
 
+        product.deactivate();
         await this.productRepository.delete(id);
     }
 }

@@ -65,6 +65,7 @@ export class ProductController {
     @Delete(':id')
     @UseGuards(JwtAuthGuard, RolesGuard)
     @Roles(UserRole.ADMIN)
+    @HttpCode(HttpStatus.NO_CONTENT)
     async remove(@Param('id', ValidateObjectIdPipe) id: string): Promise<void> {
         return await this.deleteProductUseCase.execute(id);
     }

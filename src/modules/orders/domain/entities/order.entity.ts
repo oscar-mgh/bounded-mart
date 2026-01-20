@@ -6,24 +6,17 @@ export class Order {
   constructor(
     public readonly id: Id,
     private readonly customerId: string,
-    private readonly items: OrderItem[],
+    private items: OrderItem[],
     private status: OrderStatus = OrderStatus.PENDING,
     private readonly createdAt: Date = new Date(),
   ) {
-    if (items.length === 0) throw new Error('Order must contain at least one item');
+    if (this.items.length === 0) throw new Error('Order must contain at least one item');
   }
 
-  get totalAmount(): number {
-    return this.items.reduce((acc, item) => acc + item.total, 0);
+  public getTotalAmount(): number {
+    return this.items.reduce((acc, item) => acc + item.getTotal(), 0);
   }
-
-  public markAsPaid(): void {
-    if (this.status !== OrderStatus.PENDING) {
-      throw new Error('Only pending orders can be marked as paid');
-    }
-    this.status = OrderStatus.PAID;
-  }
-
+  
   public getCustomerId(): string {
     return this.customerId;
   }
@@ -35,6 +28,13 @@ export class Order {
   }
   public getCreatedAt(): Date {
     return this.createdAt;
+  }
+  
+  public markAsPaid(): void {
+    if (this.status !== OrderStatus.PENDING) {
+      throw new Error('Only pending orders can be marked as paid');
+    }
+    this.status = OrderStatus.PAID;
   }
 
   public cancel(): void {

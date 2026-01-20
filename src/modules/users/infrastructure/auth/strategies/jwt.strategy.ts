@@ -26,14 +26,12 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     const user = await this.userRepository.findById(payload.sub);
 
     if (!user || !user.isActive()) {
-      throw new UnauthorizedException(
-        'User is no longer active or does not exist',
-      );
+      throw new UnauthorizedException('User is no longer active or does not exist');
     }
 
     return {
       id: user.id.getValue(),
-      email: user.getEmail().val,
+      email: user.getEmail().getValue(),
       role: user.getRole(),
     };
   }

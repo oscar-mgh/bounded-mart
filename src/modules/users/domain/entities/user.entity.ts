@@ -15,11 +15,10 @@ export class User {
     private role: UserRole = UserRole.CUSTOMER,
     private active: boolean = true,
   ) {
-    if (username.length < 4 || username.length > 40)
-      throw new Error('Invalid username');
-    if (!email.val.includes('@')) throw new Error('Invalid email');
+    if (this.username.length < 4 || this.username.length > 40) throw new Error('Invalid username');
+    if (!this.email.getValue().includes('@')) throw new Error('Invalid email');
   }
-  
+
   public getUsername(): string {
     return this.username;
   }

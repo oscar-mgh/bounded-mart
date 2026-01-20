@@ -6,6 +6,8 @@ export interface ProductStockInfo {
 }
 
 export abstract class CatalogIntegrationPort {
+  
   abstract getProductsInfo(productIds: string[]): Promise<ProductStockInfo[]>;
+
   abstract updateStock(productId: string, quantity: number): Promise<void>;
 }

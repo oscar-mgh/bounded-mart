@@ -37,7 +37,7 @@ export class CreateOrderUseCase {
       return new OrderItem(info.productId, info.name, info.price, item.quantity);
     });
 
-    const order = new Order(new Id(), input.customerId, orderItems);
+    const order = new Order(Id.create(), input.customerId, orderItems);
     const savedOrder = await this.orderRepository.save(order);
 
     for (const item of input.items) {

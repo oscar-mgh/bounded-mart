@@ -19,22 +19,22 @@ export class ProductMapper {
 
     static toPersistence(domain: any): any {
         return {
-            _id: domain.id.getValue(),
-            sku: domain.sku.val,
-            name: domain.name,
-            description: domain.description,
-            price: domain.price,
-            stock: domain.stock,
-            active: domain.active
+            _id: domain.id.toString(),
+            sku: domain.getSku().getValue(),
+            name: domain.getName(),
+            description: domain.getDescription(),
+            price: domain.getPrice(),
+            stock: domain.getStock(),
+            active: domain.isActive()
         };
     }
 
     static toResponse(product: Product): ProductResponseDto {
         return {
-            id: product.id.getValue(),
+            id: product.id.toString(),
             name: product.getName(),
             description: product.getDescription(),
-            sku: product.getSku().val,
+            sku: product.getSku().getValue(),
             price: product.getPrice(),
             stock: product.getStock(),
         };

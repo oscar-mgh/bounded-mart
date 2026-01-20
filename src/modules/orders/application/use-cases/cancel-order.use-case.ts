@@ -30,7 +30,7 @@ export class CancelOrderUseCase {
     await this.orderRepository.save(order);
 
     for (const item of order.getItems()) {
-      await this.catalogIntegration.updateStock(item.productId, -item.quantity);
+      await this.catalogIntegration.updateStock(item.getProductId(), -item.getQuantity());
     }
   }
 }

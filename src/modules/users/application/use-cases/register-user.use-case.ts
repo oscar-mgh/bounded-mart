@@ -20,7 +20,7 @@ export class RegisterUserUseCase {
     const hashedPassword = await this.hasher.hash(dto.password);
 
     const newUser = new User(
-      new Id(),
+      Id.create(),
       dto.username,
       new Email(dto.email),
       hashedPassword,

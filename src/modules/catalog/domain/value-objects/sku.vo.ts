@@ -5,7 +5,7 @@ export class Sku {
     }
   }
 
-  get val(): string {
+  public getValue(): string {
     return this.value;
   }
 }

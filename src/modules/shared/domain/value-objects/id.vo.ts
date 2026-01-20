@@ -10,7 +10,19 @@ export class Id {
     this.value = value || new Types.ObjectId().toHexString();
   }
 
-  getValue(): string {
+  public getValue(): string {
     return this.value;
+  }
+
+  public toString(): string {
+    return this.value;
+  }
+
+  public equals(other: Id): boolean {
+    return this.value === other.getValue();
+  }
+
+  public static create(value?: string): Id {
+    return new Id(value);
   }
 }

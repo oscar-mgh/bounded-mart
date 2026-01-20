@@ -11,7 +11,7 @@ export class UserResponseDto {
     const dto = new UserResponseDto();
     dto.id = user.id.getValue();
     dto.username = user.getUsername();
-    dto.email = user.getEmail().val;
+    dto.email = user.getEmail().getValue();
     dto.role = user.getRole();
     dto.active = user.isActive();
     return dto;

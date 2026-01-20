@@ -13,7 +13,20 @@ export class OrderItem {
     if (this.unitPrice < 0) throw new Error('Price cannot be negative');
   }
 
-  get total(): number {
+  public getTotal(): number {
     return this.unitPrice * this.quantity;
+  }
+
+  public getProductId(): string {
+    return this.productId;
+  }
+  public getProductName(): string {
+    return this.productName;
+  }
+  public getUnitPrice(): number {
+    return this.unitPrice;
+  }
+  public getQuantity(): number {
+    return this.quantity;
   }
 }

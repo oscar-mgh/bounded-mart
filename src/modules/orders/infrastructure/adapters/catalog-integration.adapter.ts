@@ -12,7 +12,7 @@ export class CatalogIntegrationAdapter implements CatalogIntegrationPort {
     return products
       .filter((p) => p !== null)
       .map((p) => ({
-        productId: p.id.getValue(),
+        productId: p.id.toString(),
         name: p.getName(),
         price: p.getPrice(),
         availableStock: p.getStock(),

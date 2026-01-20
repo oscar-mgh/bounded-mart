@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
 import { Order } from '../../domain/entities/order.entity';
 import { OrderRepositoryPort } from '../../domain/ports/order-repository.port';
 
@@ -14,7 +14,7 @@ export class GetOrderUseCase {
     }
 
     if (order.getCustomerId() !== userId) {
-      throw new Error('Forbidden: You do not have access to this order');
+      throw new ForbiddenException('You do not have access to this order');
     }
 
     return order;

@@ -1,5 +1,7 @@
 export class Email {
-  constructor(private readonly value: string) {
+  private readonly value: string;
+
+  constructor(value: string) {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(value)) {
       throw new Error('Invalid email format');
@@ -7,7 +9,7 @@ export class Email {
     this.value = value.toLowerCase();
   }
 
-  get val(): string {
+  public getValue(): string {
     return this.value;
   }
 }

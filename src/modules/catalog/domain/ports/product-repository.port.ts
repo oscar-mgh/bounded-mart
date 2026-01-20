@@ -2,6 +2,7 @@ import { Page } from 'src/modules/shared/pagination/page.model';
 import { Product } from '../entities/product.entity';
 
 export abstract class ProductRepositoryPort {
+
     abstract save(product: Product): Promise<Product>;
     
     abstract findById(id: string): Promise<Product | null>;

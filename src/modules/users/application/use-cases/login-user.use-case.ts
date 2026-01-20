@@ -18,10 +18,7 @@ export class LoginUseCase {
       throw new UnauthorizedException('Invalid credentials');
     }
 
-    const isPasswordValid = await this.hasher.compare(
-      dto.password,
-      user.getPassword(),
-    );
+    const isPasswordValid = await this.hasher.compare(dto.password, user.getPassword());
 
     if (!isPasswordValid) {
       throw new UnauthorizedException('Invalid credentials');

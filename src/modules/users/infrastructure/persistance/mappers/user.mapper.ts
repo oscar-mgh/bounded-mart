@@ -19,7 +19,7 @@ export class UserMapper {
     return {
       _id: domain.id.getValue(),
       username: domain.getUsername(),
-      email: domain.getEmail().val,
+      email: domain.getEmail().getValue(),
       password: domain.getPassword(),
       role: domain.getRole(),
       active: domain.isActive(),

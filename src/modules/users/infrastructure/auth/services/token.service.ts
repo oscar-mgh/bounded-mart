@@ -10,7 +10,7 @@ export class TokenService {
   generateToken(user: User) {
     const payload: JwtPayload = {
       sub: user.id.getValue(),
-      email: user.getEmail().val,
+      email: user.getEmail().getValue(),
       role: user.getRole(),
     };
 

@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
+import { CartModule } from './modules/cart/infrastructure/cart.module';
 import { CatalogModule } from './modules/catalog/infrastructure/catalog.module';
 import { HealthModule } from './modules/health/health.module';
 import { OrderModule } from './modules/orders/infrastructure/order.module';
@@ -19,6 +20,7 @@ import { UserModule } from './modules/users/infrastructure/user.module';
     CatalogModule,
     HealthModule,
     OrderModule,
+    CartModule,
   ],
   controllers: [],
   providers: [],

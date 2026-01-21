@@ -5,6 +5,7 @@ import { CreateProductUseCase } from '../application/use-cases/create-product.us
 import { DeleteProductUseCase } from '../application/use-cases/delete-product.use-case';
 import { FindAllProductsUseCase } from '../application/use-cases/find-all-products.use-case';
 import { FindProductByIdUseCase } from '../application/use-cases/find-product-by-id.use-case';
+import { FindProductBySkuUseCase } from '../application/use-cases/find-product-by-sku.use-case';
 import { UpdateStockUseCase } from '../application/use-cases/update-stock.use-case';
 import { ProductRepositoryPort } from '../domain/ports/product-repository.port';
 import { ProductController } from './controllers/product.controller';
@@ -36,6 +37,11 @@ const useCases = [
     provide: FindProductByIdUseCase,
     inject: [ProductRepositoryPort],
     useFactory: (repo: ProductRepositoryPort) => new FindProductByIdUseCase(repo),
+  },
+  {
+    provide: FindProductBySkuUseCase,
+    inject: [ProductRepositoryPort],
+    useFactory: (repo: ProductRepositoryPort) => new FindProductBySkuUseCase(repo),
   },
 ];
 

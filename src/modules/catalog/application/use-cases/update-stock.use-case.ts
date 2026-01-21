@@ -6,7 +6,7 @@ import { Product } from "../../domain/entities/product.entity";
 export class UpdateStockUseCase {
     constructor(private readonly productRepository: ProductRepositoryPort) { }
 
-    async execute(id: string, quantity: number): Promise<Product | null> {
+    async execute(id: string, quantity: number): Promise<Product> {
         const product = await this.productRepository.findById(id);
         if (!product) {
             throw new NotFoundException(`Product with ID ${id} not found`);

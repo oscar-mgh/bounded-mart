@@ -6,7 +6,7 @@ import { ProductRepositoryPort } from "../../domain/ports/product-repository.por
 export class FindProductByIdUseCase {
     constructor(private readonly productRepository: ProductRepositoryPort) { }
 
-    async execute(id: string): Promise<Product | null> {
+    async execute(id: string): Promise<Product> {
         const product = await this.productRepository.findById(id);
 
         if (!product) {

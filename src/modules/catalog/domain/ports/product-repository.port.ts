@@ -5,9 +5,9 @@ export abstract class ProductRepositoryPort {
 
     abstract save(product: Product): Promise<Product>;
     
-    abstract findById(id: string): Promise<Product | null>;
-    
     abstract findAll(page: number, limit: number): Promise<Page<Product>>;
+    
+    abstract findById(id: string): Promise<Product | null>;
     
     abstract findBySku(sku: string): Promise<Product | null>;
     

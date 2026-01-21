@@ -1,0 +1,33 @@
+import { BadRequestException, Injectable } from '@nestjs/common';
+import { CreateOrderUseCase } from 'src/modules/orders/application/use-cases/create-order.use-case';
+import { Order } from 'src/modules/orders/domain/entities/order.entity';
+import { CartRepositoryPort } from '../../domain/ports/cart-repository.port';
+
+@Injectable()
+export class CheckoutUseCase {
+  constructor(
+    private readonly cartRepository: CartRepositoryPort,
+    private readonly createOrderUseCase: CreateOrderUseCase,
+  ) {}
+
+  async execute(userId: string): Promise<Order> {
+    const cart = await this.cartRepository.findByUserId(userId);
+    if (!cart || cart.getItems().length === 0) {
+      throw new BadRequestException('Cannot checkout an empty cart');
+    }
+
+    const orderItemsDto = cart.getItems().map((item) => ({
+      productId: item.getProductId(),
+      quantity: item.getQuantity(),
+    }));
+
+    const order = await this.createOrderUseCase.execute({
+      customerId: cart.getUserId(),
+      items: orderItemsDto,
+    });
+
+    await this.cartRepository.deleteByUserId(userId);
+
+    return order;
+  }
+}

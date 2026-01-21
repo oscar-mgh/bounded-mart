@@ -15,24 +15,22 @@ import { OrderDocument, OrderSchema } from './persistence/schemas/order.schema';
 const useCases = [
   {
     provide: CreateOrderUseCase,
-    useFactory: (orderRepository: OrderRepositoryPort, catalogIntegration: CatalogIntegrationPort) =>
-      new CreateOrderUseCase(orderRepository, catalogIntegration),
+    useFactory: (repo: OrderRepositoryPort, catalog: CatalogIntegrationPort) => new CreateOrderUseCase(repo, catalog),
     inject: [OrderRepositoryPort, CatalogIntegrationPort],
   },
   {
     provide: GetCustomerOrdersUseCase,
-    useFactory: (orderRepository: OrderRepositoryPort) => new GetCustomerOrdersUseCase(orderRepository),
+    useFactory: (repo: OrderRepositoryPort) => new GetCustomerOrdersUseCase(repo),
     inject: [OrderRepositoryPort],
   },
   {
     provide: GetOrderUseCase,
-    useFactory: (orderRepository: OrderRepositoryPort) => new GetOrderUseCase(orderRepository),
+    useFactory: (repo: OrderRepositoryPort) => new GetOrderUseCase(repo),
     inject: [OrderRepositoryPort],
   },
   {
     provide: CancelOrderUseCase,
-    useFactory: (orderRepository: OrderRepositoryPort, catalogIntegration: CatalogIntegrationPort) =>
-      new CancelOrderUseCase(orderRepository, catalogIntegration),
+    useFactory: (repo: OrderRepositoryPort, catalog: CatalogIntegrationPort) => new CancelOrderUseCase(repo, catalog),
     inject: [OrderRepositoryPort, CatalogIntegrationPort],
   },
 ];
@@ -45,5 +43,6 @@ const useCases = [
     { provide: CatalogIntegrationPort, useClass: CatalogIntegrationAdapter },
   ],
   controllers: [OrderController],
+  exports: [OrderRepositoryPort, CatalogIntegrationPort, CreateOrderUseCase],
 })
 export class OrderModule {}

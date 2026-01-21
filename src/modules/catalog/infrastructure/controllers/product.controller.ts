@@ -74,7 +74,7 @@ export class ProductController {
 
   @Post()
   @UseGuards(RolesGuard)
-  @Roles(UserRole.ADMIN)
+  @Roles(UserRole.SALES_ADMIN)
   @HttpCode(HttpStatus.CREATED)
   async create(@Body() dto: CreateProductDto): Promise<ProductResponseDto> {
     const product = await this.createProductUseCase.execute(dto);
@@ -83,7 +83,7 @@ export class ProductController {
 
   @Patch(':id')
   @UseGuards(RolesGuard)
-  @Roles(UserRole.ADMIN)
+  @Roles(UserRole.SALES_ADMIN)
   @HttpCode(HttpStatus.OK)
   async updateStock(@Query() dto: UpdateStockQueryDto): Promise<ProductResponseDto> {
     const product = await this.updateStockUseCase.execute(dto.id, dto.quantity);
@@ -93,7 +93,7 @@ export class ProductController {
   @Patch('apply-discount')
   @HttpCode(HttpStatus.OK)
   @UseGuards(RolesGuard)
-  @Roles(UserRole.ADMIN)
+  @Roles(UserRole.SALES_ADMIN)
   async applyDiscount(@Body() dto: ApplyDiscountDto): Promise<ApplyDiscountResponseDto> {
     const criteria: ProductCriteria = {
       ids: dto.ids,
@@ -113,7 +113,7 @@ export class ProductController {
 
   @Delete(':id')
   @UseGuards(RolesGuard)
-  @Roles(UserRole.ADMIN)
+  @Roles(UserRole.SALES_ADMIN)
   @HttpCode(HttpStatus.NO_CONTENT)
   async remove(@Param('id', ValidateObjectIdPipe) id: string): Promise<void> {
     return await this.deleteProductUseCase.execute(id);

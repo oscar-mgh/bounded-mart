@@ -15,18 +15,22 @@ import { ValidateObjectIdPipe } from 'src/modules/shared/infrastructure/pipes/va
 import { UserRole } from 'src/modules/users/domain/entities/user.entity';
 import { Roles } from 'src/modules/users/infrastructure/auth/decorators/roles.decorator';
 import { JwtAuthGuard } from 'src/modules/users/infrastructure/auth/guards/jwt-auth.guard';
+import { RolesGuard } from 'src/modules/users/infrastructure/auth/guards/roles.guard';
+import { ApplyDiscountUseCase } from '../../application/use-cases/apply-discount.use-case';
 import { CreateProductUseCase } from '../../application/use-cases/create-product.use-case';
 import { DeleteProductUseCase } from '../../application/use-cases/delete-product.use-case';
 import { FindAllProductsUseCase } from '../../application/use-cases/find-all-products.use-case';
 import { FindProductByIdUseCase } from '../../application/use-cases/find-product-by-id.use-case';
 import { FindProductBySkuUseCase } from '../../application/use-cases/find-product-by-sku.use-case';
-import { CreateProductDto } from '../http/create-product.dto';
-import { PaginatedResult, PaginationQueryDto } from '../http/pagination.dto';
-import { ProductResponseDto } from '../http/product-response.dto';
-import { UpdateStockQueryDto } from '../http/update-stock.dto';
-import { ProductMapper } from '../persistance/mappers/product.mapper';
+import { ProductCriteria } from '../../domain/ports/product-repository.port';
+import { ApplyDiscountResponseDto } from '../http/dtos/apply-discount-response.dto';
+import { ApplyDiscountDto } from '../http/dtos/apply-discount.dto';
+import { CreateProductDto } from '../http/dtos/create-product.dto';
+import { PaginatedResult, PaginationQueryDto } from '../http/dtos/pagination.dto';
+import { ProductResponseDto } from '../http/dtos/product-response.dto';
+import { UpdateStockQueryDto } from '../http/dtos/update-stock.dto';
+import { ProductMapper } from '../persistence/mappers/product.mapper';
 import { UpdateStockUseCase } from './../../application/use-cases/update-stock.use-case';
-import { RolesGuard } from 'src/modules/users/infrastructure/auth/guards/roles.guard';
 
 @Controller('products')
 @UseGuards(JwtAuthGuard)
@@ -38,6 +42,7 @@ export class ProductController {
     private readonly createProductUseCase: CreateProductUseCase,
     private readonly updateStockUseCase: UpdateStockUseCase,
     private readonly deleteProductUseCase: DeleteProductUseCase,
+    private readonly applyDiscountUseCase: ApplyDiscountUseCase,
   ) {}
 
   @Get()
@@ -77,14 +82,35 @@ export class ProductController {
   }
 
   @Patch(':id')
-  @Roles(UserRole.ADMIN)
   @UseGuards(RolesGuard)
+  @Roles(UserRole.ADMIN)
   @HttpCode(HttpStatus.OK)
   async updateStock(@Query() dto: UpdateStockQueryDto): Promise<ProductResponseDto> {
     const product = await this.updateStockUseCase.execute(dto.id, dto.quantity);
     return ProductMapper.toResponse(product);
   }
-  
+
+  @Patch('apply-discount')
+  @HttpCode(HttpStatus.OK)
+  @UseGuards(RolesGuard)
+  @Roles(UserRole.ADMIN)
+  async applyDiscount(@Body() dto: ApplyDiscountDto): Promise<ApplyDiscountResponseDto> {
+    const criteria: ProductCriteria = {
+      ids: dto.ids,
+      category: dto.category,
+    };
+
+    const discountData: { code: string; percentage: number; expirationDate: Date } = {
+      code: dto.code,
+      percentage: dto.percentage,
+      expirationDate: new Date(dto.expirationDate),
+    };
+
+    const affectedCount = await this.applyDiscountUseCase.execute(criteria, discountData);
+
+    return new ApplyDiscountResponseDto('Discount applied successfully to the selected products!', affectedCount);
+  }
+
   @Delete(':id')
   @UseGuards(RolesGuard)
   @Roles(UserRole.ADMIN)

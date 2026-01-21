@@ -10,8 +10,8 @@ import { UserRepositoryPort } from '../domain/ports/user-repository.port';
 import { TokenService } from './auth/services/token.service';
 import { JwtStrategy } from './auth/strategies/jwt.strategy';
 import { AuthController } from './controllers/auth.controller';
-import { UserDocument, UserSchema } from './persistance/entities/user.schema';
-import { MongooseUserRepository } from './persistance/repositories/mongoose-user.repository';
+import { UserDocument, UserSchema } from './persistence/entities/user.schema';
+import { MongooseUserRepository } from './persistence/repositories/mongoose-user.repository';
 import { BcryptHasher } from './security/bcrypt-hasher';
 
 @Module({

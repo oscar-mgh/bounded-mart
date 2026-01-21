@@ -2,7 +2,7 @@ import { Injectable } from "@nestjs/common";
 import { Page } from "../../../shared/pagination/page.model";
 import { Product } from "../../domain/entities/product.entity";
 import { ProductRepositoryPort } from "../../domain/ports/product-repository.port";
-import { PaginationQueryDto } from "../../infrastructure/http/pagination.dto";
+import { PaginationQueryDto } from "../../infrastructure/http/dtos/pagination.dto";
 
 @Injectable()
 export class FindAllProductsUseCase {

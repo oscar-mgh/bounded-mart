@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { UserModule } from 'src/modules/users/infrastructure/user.module';
+import { ApplyDiscountUseCase } from '../application/use-cases/apply-discount.use-case';
 import { CreateProductUseCase } from '../application/use-cases/create-product.use-case';
 import { DeleteProductUseCase } from '../application/use-cases/delete-product.use-case';
 import { FindAllProductsUseCase } from '../application/use-cases/find-all-products.use-case';
@@ -9,8 +10,8 @@ import { FindProductBySkuUseCase } from '../application/use-cases/find-product-b
 import { UpdateStockUseCase } from '../application/use-cases/update-stock.use-case';
 import { ProductRepositoryPort } from '../domain/ports/product-repository.port';
 import { ProductController } from './controllers/product.controller';
-import { ProductDocument, ProductSchema } from './persistance/entities/product.schema';
-import { MongooseProductRepository } from './persistance/repositories/mongoose-product.repository';
+import { ProductDocument, ProductSchema } from './persistence/entities/product.schema';
+import { MongooseProductRepository } from './persistence/repositories/mongoose-product.repository';
 
 const useCases = [
   {
@@ -42,6 +43,11 @@ const useCases = [
     provide: FindProductBySkuUseCase,
     inject: [ProductRepositoryPort],
     useFactory: (repo: ProductRepositoryPort) => new FindProductBySkuUseCase(repo),
+  },
+  {
+    provide: ApplyDiscountUseCase,
+    inject: [ProductRepositoryPort],
+    useFactory: (repo: ProductRepositoryPort) => new ApplyDiscountUseCase(repo),
   },
 ];
 

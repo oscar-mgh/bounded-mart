@@ -1,5 +1,6 @@
 import { Sku } from 'src/modules/catalog/domain/value-objects/sku.vo';
 import { Id } from 'src/modules/shared/domain/value-objects/id.vo';
+import { ProductDiscount } from '../value-objects/product-discount.vo';
 
 export class Product {
   constructor(
@@ -9,23 +10,34 @@ export class Product {
     private description: string,
     private price: number,
     private stock: number,
+    private category: string,
     private active: boolean = true,
+    private discount?: ProductDiscount,
   ) {
     this.validate();
   }
-
-  public getSku(): Sku { return this.sku; }
-  public getName(): string { return this.name; }
-  public getDescription(): string { return this.description; }
-  public getPrice(): number { return this.price; }
-  public getStock(): number { return this.stock; }
-  public isActive(): boolean { return this.active; }
 
   private validate() {
     if (this.name.length < 2 || this.name.length > 50)
       throw new Error('Invalid name length');
     if (this.price <= 0) throw new Error('Price must be positive');
     if (this.stock < 0) throw new Error('Stock cannot be negative');
+  }
+
+  public getSku(): Sku { return this.sku; }
+  public getName(): string { return this.name; }
+  public getDescription(): string { return this.description; }
+  public getStock(): number { return this.stock; }
+  public isActive(): boolean { return this.active; }
+  public getPrice(): number { return this.price; }
+  public getCategory(): string { return this.category; }
+  public getDiscount(): ProductDiscount | undefined { return this.discount; }
+
+  public getFinalPrice(): number {
+    if (this.discount) {
+      return this.price - this.discount.getDiscountAmount(this.price);
+    }
+    return this.price;
   }
 
   public deactivate(): void {
@@ -35,5 +47,13 @@ export class Product {
   public updateStock(newQuantity: number) {
     if (newQuantity < 0) throw new Error('Stock cannot be negative');
     this.stock = newQuantity;
+  }
+
+  public applyDiscount(discount: ProductDiscount): void {
+    this.discount = discount;
+  }
+
+  public removeDiscount(): void {
+    this.discount = undefined;
   }
 }

@@ -1,6 +1,6 @@
 import { Types } from 'mongoose';
-import { User } from 'src/modules/users/domain/entities/user.entity';
-import { Email } from 'src/modules/users/domain/value-objects/email.vo';
+import { User } from 'src/modules/auth/domain/entities/user.entity';
+import { Email } from 'src/modules/auth/domain/value-objects/email.vo';
 import { Id } from '../../../../shared/domain/value-objects/id.vo';
 import { UserDocument } from '../entities/user.schema';
 

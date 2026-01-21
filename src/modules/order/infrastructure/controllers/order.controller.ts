@@ -1,7 +1,7 @@
 import { Body, Controller, Delete, Get, HttpCode, HttpStatus, Param, Post, UseGuards } from '@nestjs/common';
 import { ValidateObjectIdPipe } from 'src/modules/shared/infrastructure/pipes/validate-object-id.pipe';
-import { GetUser } from 'src/modules/users/infrastructure/auth/decorators/get-user.decorator';
-import { JwtAuthGuard } from 'src/modules/users/infrastructure/auth/guards/jwt-auth.guard';
+import { GetUser } from 'src/modules/auth/infrastructure/auth/decorators/get-user.decorator';
+import { JwtAuthGuard } from 'src/modules/auth/infrastructure/auth/guards/jwt-auth.guard';
 import { CancelOrderUseCase } from '../../application/use-cases/cancel-order.use-case';
 import { CreateOrderUseCase } from '../../application/use-cases/create-order.use-case';
 import { GetCustomerOrdersUseCase } from '../../application/use-cases/get-customer-orders.use-case';

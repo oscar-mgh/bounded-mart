@@ -1,9 +1,9 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { CatalogModule } from 'src/modules/catalog/infrastructure/catalog.module';
-import { CreateOrderUseCase } from 'src/modules/orders/application/use-cases/create-order.use-case';
-import { CatalogIntegrationPort } from 'src/modules/orders/domain/ports/catalog-integration.port';
-import { OrderModule } from 'src/modules/orders/infrastructure/order.module';
+import { CreateOrderUseCase } from 'src/modules/order/application/use-cases/create-order.use-case';
+import { CatalogIntegrationPort } from 'src/modules/order/domain/ports/catalog-integration.port';
+import { OrderModule } from 'src/modules/order/infrastructure/order.module';
 import { AddToCartUseCase } from '../application/use-cases/add-to-cart.use-case';
 import { CheckoutUseCase } from '../application/use-cases/checkout.use-case';
 import { DeleteCartUseCase } from '../application/use-cases/delete-cart.use-case';

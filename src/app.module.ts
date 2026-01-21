@@ -4,8 +4,8 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { CartModule } from './modules/cart/infrastructure/cart.module';
 import { CatalogModule } from './modules/catalog/infrastructure/catalog.module';
 import { HealthModule } from './modules/health/health.module';
-import { OrderModule } from './modules/orders/infrastructure/order.module';
-import { UserModule } from './modules/users/infrastructure/user.module';
+import { OrderModule } from './modules/order/infrastructure/order.module';
+import { UserModule } from './modules/auth/infrastructure/auth.module';
 
 @Module({
   imports: [

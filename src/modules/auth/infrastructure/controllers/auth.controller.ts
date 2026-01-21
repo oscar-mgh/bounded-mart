@@ -1,10 +1,10 @@
 import { Body, Controller, HttpCode, HttpStatus, Post } from '@nestjs/common';
-import { LoginDto } from '../../application/dtos/login.dto';
-import { RegisterUserDto } from '../../application/dtos/register-user.dto';
-import { UserResponseDto } from '../../application/dtos/user-response.dto';
 import { LoginUseCase } from '../../application/use-cases/login-user.use-case';
 import { RegisterUserUseCase } from '../../application/use-cases/register-user.use-case';
 import { TokenService } from '../auth/services/token.service';
+import { LoginDto } from '../http/dtos/login.dto';
+import { RegisterUserDto } from '../http/dtos/register-user.dto';
+import { UserResponseDto } from '../http/dtos/user-response.dto';
 
 @Controller('auth')
 export class AuthController {
@@ -12,7 +12,7 @@ export class AuthController {
     private readonly registerUserUseCase: RegisterUserUseCase,
     private readonly loginUseCase: LoginUseCase,
     private readonly tokenService: TokenService,
-  ) { }
+  ) {}
 
   @Post('register')
   @HttpCode(HttpStatus.CREATED)

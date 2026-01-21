@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
-import { UserModule } from 'src/modules/users/infrastructure/user.module';
+import { UserModule } from 'src/modules/auth/infrastructure/auth.module';
 import { ApplyDiscountUseCase } from '../application/use-cases/apply-discount.use-case';
 import { CreateProductUseCase } from '../application/use-cases/create-product.use-case';
 import { DeleteProductUseCase } from '../application/use-cases/delete-product.use-case';

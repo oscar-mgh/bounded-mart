@@ -1,4 +1,4 @@
-import { UserRole } from '../../domain/entities/user.entity';
+import { UserRole } from 'src/modules/auth/domain/entities/user.entity';
 
 export class UserResponseDto {
   id: string;

@@ -1,10 +1,10 @@
 import { ConflictException, Injectable } from '@nestjs/common';
-import { Email } from 'src/modules/users/domain/value-objects/email.vo';
+import { Email } from 'src/modules/auth/domain/value-objects/email.vo';
 import { Id } from '../../../shared/domain/value-objects/id.vo';
 import { User, UserRole } from '../../domain/entities/user.entity';
 import { PasswordHasherPort } from '../../domain/ports/password-hasher.port';
 import { UserRepositoryPort } from '../../domain/ports/user-repository.port';
-import { RegisterUserDto } from '../dtos/register-user.dto';
+import { RegisterUserDto } from '../../infrastructure/http/dtos/register-user.dto';
 
 @Injectable()
 export class RegisterUserUseCase {

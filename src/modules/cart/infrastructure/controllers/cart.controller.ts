@@ -1,8 +1,8 @@
 import { Body, Controller, Delete, Get, HttpCode, HttpStatus, Post, UseGuards } from '@nestjs/common';
-import { OrderResponseDto } from 'src/modules/orders/infrastructure/http/dtos/order-response.dto';
-import { OrderMapper } from 'src/modules/orders/infrastructure/persistence/mappers/order.mapper';
-import { GetUser } from 'src/modules/users/infrastructure/auth/decorators/get-user.decorator';
-import { JwtAuthGuard } from 'src/modules/users/infrastructure/auth/guards/jwt-auth.guard';
+import { OrderResponseDto } from 'src/modules/order/infrastructure/http/dtos/order-response.dto';
+import { OrderMapper } from 'src/modules/order/infrastructure/persistence/mappers/order.mapper';
+import { GetUser } from 'src/modules/auth/infrastructure/auth/decorators/get-user.decorator';
+import { JwtAuthGuard } from 'src/modules/auth/infrastructure/auth/guards/jwt-auth.guard';
 import { AddToCartUseCase } from '../../application/use-cases/add-to-cart.use-case';
 import { CheckoutUseCase } from '../../application/use-cases/checkout.use-case';
 import { DeleteCartUseCase } from '../../application/use-cases/delete-cart.use-case';

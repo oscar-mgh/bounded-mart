@@ -1,4 +1,4 @@
-import { Email } from 'src/modules/users/domain/value-objects/email.vo';
+import { Email } from 'src/modules/auth/domain/value-objects/email.vo';
 import { Id } from 'src/modules/shared/domain/value-objects/id.vo';
 
 export enum UserRole {

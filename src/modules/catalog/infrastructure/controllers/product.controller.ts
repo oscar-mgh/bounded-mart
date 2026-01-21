@@ -12,10 +12,10 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { ValidateObjectIdPipe } from 'src/modules/shared/infrastructure/pipes/validate-object-id.pipe';
-import { UserRole } from 'src/modules/users/domain/entities/user.entity';
-import { Roles } from 'src/modules/users/infrastructure/auth/decorators/roles.decorator';
-import { JwtAuthGuard } from 'src/modules/users/infrastructure/auth/guards/jwt-auth.guard';
-import { RolesGuard } from 'src/modules/users/infrastructure/auth/guards/roles.guard';
+import { UserRole } from 'src/modules/auth/domain/entities/user.entity';
+import { Roles } from 'src/modules/auth/infrastructure/auth/decorators/roles.decorator';
+import { JwtAuthGuard } from 'src/modules/auth/infrastructure/auth/guards/jwt-auth.guard';
+import { RolesGuard } from 'src/modules/auth/infrastructure/auth/guards/roles.guard';
 import { ApplyDiscountUseCase } from '../../application/use-cases/apply-discount.use-case';
 import { CreateProductUseCase } from '../../application/use-cases/create-product.use-case';
 import { DeleteProductUseCase } from '../../application/use-cases/delete-product.use-case';

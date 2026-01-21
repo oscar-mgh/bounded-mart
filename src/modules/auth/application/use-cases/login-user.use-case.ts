@@ -2,7 +2,7 @@ import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { User } from '../../domain/entities/user.entity';
 import { PasswordHasherPort } from '../../domain/ports/password-hasher.port';
 import { UserRepositoryPort } from '../../domain/ports/user-repository.port';
-import { LoginDto } from '../dtos/login.dto';
+import { LoginDto } from '../../infrastructure/http/dtos/login.dto';
 
 @Injectable()
 export class LoginUseCase {

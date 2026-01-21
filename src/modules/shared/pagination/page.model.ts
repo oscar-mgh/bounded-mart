@@ -1,8 +1,6 @@
-export class Page<T> {
-    constructor(
-        public readonly data: T[],
-        public readonly page: number,
-        public readonly totalPages: number,
-        public readonly totalElements: number,
-    ) { }
+export interface Page<T> {
+  data: T[];
+  page: number;
+  totalPages: number;
+  totalElements: number;
 }

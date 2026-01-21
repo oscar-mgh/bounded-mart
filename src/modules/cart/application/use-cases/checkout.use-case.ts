@@ -1,6 +1,6 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
-import { CreateOrderUseCase } from 'src/modules/orders/application/use-cases/create-order.use-case';
-import { Order } from 'src/modules/orders/domain/entities/order.entity';
+import { CreateOrderUseCase } from 'src/modules/order/application/use-cases/create-order.use-case';
+import { Order } from 'src/modules/order/domain/entities/order.entity';
 import { CartRepositoryPort } from '../../domain/ports/cart-repository.port';
 
 @Injectable()

@@ -4,7 +4,7 @@ import { Id } from '../../../shared/domain/value-objects/id.vo';
 import { User, UserRole } from '../../domain/entities/user.entity';
 import { PasswordHasherPort } from '../../domain/ports/password-hasher.port';
 import { UserRepositoryPort } from '../../domain/ports/user-repository.port';
-import { RegisterUserDto } from '../../infrastructure/http/dtos/register-user.dto';
+import { RegisterUserCommand } from './commands/register-user.command';
 
 @Injectable()
 export class RegisterUserUseCase {
@@ -13,16 +13,16 @@ export class RegisterUserUseCase {
     private readonly hasher: PasswordHasherPort,
   ) { }
 
-  async execute(dto: RegisterUserDto): Promise<User> {
-    const existing = await this.userRepository.findByEmail(dto.email);
+  async execute(command: RegisterUserCommand): Promise<User> {
+    const existing = await this.userRepository.findByEmail(command.email);
     if (existing) throw new ConflictException('User already exists');
 
-    const hashedPassword = await this.hasher.hash(dto.password);
+    const hashedPassword = await this.hasher.hash(command.password);
 
     const newUser = new User(
       Id.create(),
-      dto.username,
-      new Email(dto.email),
+      command.username,
+      new Email(command.email),
       hashedPassword,
       UserRole.CUSTOMER,
     );

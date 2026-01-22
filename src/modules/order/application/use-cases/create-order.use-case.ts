@@ -4,14 +4,7 @@ import { Order } from '../../domain/entities/order.entity';
 import { CatalogIntegrationPort } from '../../domain/ports/catalog-integration.port';
 import { OrderRepositoryPort } from '../../domain/ports/order-repository.port';
 import { OrderItem } from '../../domain/value-objects/order-item.vo';
-
-export interface CreateOrderInput {
-  customerId: string;
-  items: {
-    productId: string;
-    quantity: number;
-  }[];
-}
+import { CreateOrderCommand } from './commands/create-order.command';
 
 @Injectable()
 export class CreateOrderUseCase {
@@ -20,10 +13,11 @@ export class CreateOrderUseCase {
     private readonly catalogIntegration: CatalogIntegrationPort,
   ) {}
 
-  async execute(input: CreateOrderInput): Promise<Order> {
-    const productIds = input.items.map((item) => item.productId);
+  async execute(command: CreateOrderCommand): Promise<Order> {
+    const { customerId, items } = command;
+    const productIds = items.map((item) => item.productId);
     const productsInfo = await this.catalogIntegration.getProductsInfo(productIds);
-    const orderItems = input.items.map((item) => {
+    const orderItems = items.map((item) => {
       const info = productsInfo.find((p) => p.productId === item.productId);
 
       if (!info) {
@@ -37,10 +31,10 @@ export class CreateOrderUseCase {
       return new OrderItem(info.productId, info.name, info.price, item.quantity);
     });
 
-    const order = new Order(Id.create(), input.customerId, orderItems);
+    const order = new Order(Id.create(), customerId, orderItems);
     const savedOrder = await this.orderRepository.save(order);
 
-    for (const item of input.items) {
+    for (const item of items) {
       await this.catalogIntegration.updateStock(item.productId, item.quantity);
     }
 

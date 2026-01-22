@@ -1,16 +1,18 @@
 import { ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
 import { Order } from '../../domain/entities/order.entity';
 import { OrderRepositoryPort } from '../../domain/ports/order-repository.port';
+import { GetOrderQuery } from './queries/get-order.query';
 
 @Injectable()
 export class GetOrderUseCase {
   constructor(private readonly orderRepository: OrderRepositoryPort) {}
 
-  async execute(id: string, userId: string): Promise<Order> {
-    const order = await this.orderRepository.findById(id);
+  async execute(query: GetOrderQuery): Promise<Order> {
+    const { orderId, userId } = query;
+    const order = await this.orderRepository.findById(orderId);
 
     if (!order) {
-      throw new NotFoundException(`Order with ID ${id} not found`);
+      throw new NotFoundException(`Order with ID ${orderId} not found`);
     }
 
     if (order.getCustomerId() !== userId) {

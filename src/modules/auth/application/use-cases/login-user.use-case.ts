@@ -2,7 +2,7 @@ import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { User } from '../../domain/entities/user.entity';
 import { PasswordHasherPort } from '../../domain/ports/password-hasher.port';
 import { UserRepositoryPort } from '../../domain/ports/user-repository.port';
-import { LoginDto } from '../../infrastructure/http/dtos/login.dto';
+import { LoginCommand } from './commands/login-user.command';
 
 @Injectable()
 export class LoginUseCase {
@@ -11,14 +11,15 @@ export class LoginUseCase {
     private readonly hasher: PasswordHasherPort,
   ) {}
 
-  async execute(dto: LoginDto): Promise<User> {
-    const user = await this.userRepository.findByEmail(dto.email);
+  async execute(command: LoginCommand): Promise<User> {
+    const { email, password } = command;
+    const user = await this.userRepository.findByEmail(email);
 
     if (!user) {
       throw new UnauthorizedException('Invalid credentials');
     }
 
-    const isPasswordValid = await this.hasher.compare(dto.password, user.getPassword());
+    const isPasswordValid = await this.hasher.compare(password, user.getPassword());
 
     if (!isPasswordValid) {
       throw new UnauthorizedException('Invalid credentials');

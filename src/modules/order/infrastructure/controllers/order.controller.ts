@@ -1,7 +1,7 @@
 import { Body, Controller, Delete, Get, HttpCode, HttpStatus, Param, Post, UseGuards } from '@nestjs/common';
-import { ValidateObjectIdPipe } from 'src/modules/shared/infrastructure/pipes/validate-object-id.pipe';
 import { GetUser } from 'src/modules/auth/infrastructure/auth/decorators/get-user.decorator';
 import { JwtAuthGuard } from 'src/modules/auth/infrastructure/auth/guards/jwt-auth.guard';
+import { ValidateObjectIdPipe } from 'src/modules/shared/infrastructure/pipes/validate-object-id.pipe';
 import { CancelOrderUseCase } from '../../application/use-cases/cancel-order.use-case';
 import { CreateOrderUseCase } from '../../application/use-cases/create-order.use-case';
 import { GetCustomerOrdersUseCase } from '../../application/use-cases/get-customer-orders.use-case';
@@ -33,7 +33,7 @@ export class OrderController {
   @Get('customer/:customerId')
   @HttpCode(HttpStatus.OK)
   async findCustomerOrders(@Param('customerId', ValidateObjectIdPipe) customerId: string): Promise<OrderResponseDto[]> {
-    const orders = await this.getCustomerOrdersUseCase.execute(customerId);
+    const orders = await this.getCustomerOrdersUseCase.execute({ customerId });
     return orders.map((order) => OrderMapper.toResponse(order));
   }
 
@@ -43,13 +43,13 @@ export class OrderController {
     @Param('id', ValidateObjectIdPipe) id: string,
     @GetUser('id') userId: string,
   ): Promise<OrderResponseDto> {
-    const order = await this.getOrderUseCase.execute(id, userId);
+    const order = await this.getOrderUseCase.execute({ orderId: id, userId });
     return OrderMapper.toResponse(order);
   }
 
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
   async cancel(@Param('id', ValidateObjectIdPipe) id: string, @GetUser('id') userId: string): Promise<void> {
-    await this.cancelOrderUseCase.execute(id, userId);
+    await this.cancelOrderUseCase.execute({ orderId: id, userId });
   }
 }

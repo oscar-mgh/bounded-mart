@@ -3,6 +3,7 @@ import { CatalogIntegrationPort } from 'src/modules/order/domain/ports/catalog-i
 import { Id } from 'src/modules/shared/domain/value-objects/id.vo';
 import { Cart } from '../../domain/entities/cart.entity';
 import { CartRepositoryPort } from '../../domain/ports/cart-repository.port';
+import { AddToCartCommand } from './commands/add-to-cart.command';
 
 @Injectable()
 export class AddToCartUseCase {
@@ -11,7 +12,8 @@ export class AddToCartUseCase {
     private readonly catalogIntegration: CatalogIntegrationPort,
   ) {}
 
-  async execute(userId: string, productId: string, quantity: number): Promise<Cart> {
+  async execute(command: AddToCartCommand): Promise<Cart> {
+    const { userId, productId, quantity } = command;
     const [product] = await this.catalogIntegration.getProductsInfo([productId]);
     if (!product) throw new NotFoundException('Product not found');
 

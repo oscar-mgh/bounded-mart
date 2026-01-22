@@ -23,28 +23,29 @@ export class CartController {
 
   @Get()
   @HttpCode(HttpStatus.OK)
-  async getCart(@GetUser('id') userId: string): Promise<CartResponseDto> {
-    const cart = await this.findCartByUserIdUseCase.execute(userId);
+  async findCartByUserId(@GetUser('id') userId: string): Promise<CartResponseDto> {
+    const cart = await this.findCartByUserIdUseCase.execute({ userId });
     return CartMapper.toResponse(cart);
   }
 
   @Post('items')
   @HttpCode(HttpStatus.CREATED)
   async addItem(@GetUser('id') userId: string, @Body() dto: AddItemDto): Promise<CartResponseDto> {
-    const cart = await this.addToCartUseCase.execute(userId, dto.productId, dto.quantity);
+    const { productId, quantity } = dto;
+    const cart = await this.addToCartUseCase.execute({ userId, productId, quantity });
     return CartMapper.toResponse(cart);
   }
 
   @Post('checkout')
   @HttpCode(HttpStatus.CREATED)
   async checkout(@GetUser('id') userId: string): Promise<OrderResponseDto> {
-    const order = await this.checkoutUseCase.execute(userId);
+    const order = await this.checkoutUseCase.execute({ userId });
     return OrderMapper.toResponse(order);
   }
 
   @Delete()
   @HttpCode(HttpStatus.NO_CONTENT)
   async deleteCart(@GetUser('id') userId: string): Promise<void> {
-    await this.deleteCartUseCase.execute(userId);
+    await this.deleteCartUseCase.execute({ userId });
   }
 }

@@ -11,18 +11,18 @@ import {
   Query,
   UseGuards,
 } from '@nestjs/common';
-import { ValidateObjectIdPipe } from 'src/modules/shared/infrastructure/pipes/validate-object-id.pipe';
 import { UserRole } from 'src/modules/auth/domain/entities/user.entity';
 import { Roles } from 'src/modules/auth/infrastructure/auth/decorators/roles.decorator';
 import { JwtAuthGuard } from 'src/modules/auth/infrastructure/auth/guards/jwt-auth.guard';
 import { RolesGuard } from 'src/modules/auth/infrastructure/auth/guards/roles.guard';
+import { ValidateObjectIdPipe } from 'src/modules/shared/infrastructure/pipes/validate-object-id.pipe';
 import { ApplyDiscountUseCase } from '../../application/use-cases/apply-discount.use-case';
+import { ApplyDiscountCommand } from '../../application/use-cases/commands/apply-discount.command';
 import { CreateProductUseCase } from '../../application/use-cases/create-product.use-case';
 import { DeleteProductUseCase } from '../../application/use-cases/delete-product.use-case';
 import { FindAllProductsUseCase } from '../../application/use-cases/find-all-products.use-case';
 import { FindProductByIdUseCase } from '../../application/use-cases/find-product-by-id.use-case';
 import { FindProductBySkuUseCase } from '../../application/use-cases/find-product-by-sku.use-case';
-import { ProductCriteria } from '../../domain/ports/product-repository.port';
 import { ApplyDiscountResponseDto } from '../http/dtos/apply-discount-response.dto';
 import { ApplyDiscountDto } from '../http/dtos/apply-discount.dto';
 import { CreateProductDto } from '../http/dtos/create-product.dto';
@@ -61,14 +61,14 @@ export class ProductController {
   @Get(':id')
   @HttpCode(HttpStatus.OK)
   async findById(@Param('id', ValidateObjectIdPipe) id: string): Promise<ProductResponseDto> {
-    const product = await this.findProductByIdUseCase.execute(id);
+    const product = await this.findProductByIdUseCase.execute({ id });
     return ProductMapper.toResponse(product);
   }
 
   @Get(':sku')
   @HttpCode(HttpStatus.OK)
   async findBySku(@Param('sku') sku: string): Promise<ProductResponseDto> {
-    const product = await this.findProductBySkuUseCase.execute(sku);
+    const product = await this.findProductBySkuUseCase.execute({ sku });
     return ProductMapper.toResponse(product);
   }
 
@@ -86,29 +86,34 @@ export class ProductController {
   @Roles(UserRole.SALES_ADMIN)
   @HttpCode(HttpStatus.OK)
   async updateStock(@Query() dto: UpdateStockQueryDto): Promise<ProductResponseDto> {
-    const product = await this.updateStockUseCase.execute(dto.id, dto.quantity);
+    const product = await this.updateStockUseCase.execute(dto);
     return ProductMapper.toResponse(product);
   }
 
   @Patch('apply-discount')
-  @HttpCode(HttpStatus.OK)
   @UseGuards(RolesGuard)
   @Roles(UserRole.SALES_ADMIN)
+  @HttpCode(HttpStatus.OK)
   async applyDiscount(@Body() dto: ApplyDiscountDto): Promise<ApplyDiscountResponseDto> {
-    const criteria: ProductCriteria = {
-      ids: dto.ids,
-      category: dto.category,
+    const { ids, category, code, percentage, expirationDate } = dto;
+    const command: ApplyDiscountCommand = {
+      criteria: {
+        ids,
+        category,
+      },
+      discountData: {
+        code,
+        percentage,
+        expirationDate: new Date(expirationDate),
+      },
     };
-
-    const discountData: { code: string; percentage: number; expirationDate: Date } = {
-      code: dto.code,
-      percentage: dto.percentage,
-      expirationDate: new Date(dto.expirationDate),
+    const affectedProducts = await this.applyDiscountUseCase.execute(command);
+    const response: ApplyDiscountResponseDto = {
+      message: 'Discount applied successfully to the selected products!',
+      affectedProducts,
+      timestamp: new Date().toISOString(),
     };
-
-    const affectedCount = await this.applyDiscountUseCase.execute(criteria, discountData);
-
-    return new ApplyDiscountResponseDto('Discount applied successfully to the selected products!', affectedCount);
+    return response;
   }
 
   @Delete(':id')
@@ -116,6 +121,6 @@ export class ProductController {
   @Roles(UserRole.SALES_ADMIN)
   @HttpCode(HttpStatus.NO_CONTENT)
   async remove(@Param('id', ValidateObjectIdPipe) id: string): Promise<void> {
-    return await this.deleteProductUseCase.execute(id);
+    return await this.deleteProductUseCase.execute({ id });
   }
 }

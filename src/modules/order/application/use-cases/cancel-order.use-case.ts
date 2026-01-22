@@ -1,7 +1,8 @@
-import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
-import { OrderRepositoryPort } from '../../domain/ports/order-repository.port';
-import { CatalogIntegrationPort } from '../../domain/ports/catalog-integration.port';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { OrderStatus } from '../../domain/enums/order-status.enum';
+import { CatalogIntegrationPort } from '../../domain/ports/catalog-integration.port';
+import { OrderRepositoryPort } from '../../domain/ports/order-repository.port';
+import { CancelOrderCommand } from './commands/cancel-order.command';
 
 @Injectable()
 export class CancelOrderUseCase {
@@ -10,7 +11,8 @@ export class CancelOrderUseCase {
     private readonly catalogIntegration: CatalogIntegrationPort,
   ) {}
 
-  async execute(orderId: string, userId: string): Promise<void> {
+  async execute(command: CancelOrderCommand): Promise<void> {
+    const { orderId, userId } = command;
     const order = await this.orderRepository.findById(orderId);
 
     if (!order) {

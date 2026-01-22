@@ -4,40 +4,32 @@ import { Product } from '../../domain/entities/product.entity';
 import { ProductRepositoryPort } from '../../domain/ports/product-repository.port';
 import { ProductDiscount } from '../../domain/value-objects/product-discount.vo';
 import { Sku } from '../../domain/value-objects/sku.vo';
-
-interface CreateProductDto {
-  sku: string;
-  name: string;
-  description: string;
-  price: number;
-  stock: number;
-  category: string;
-  discount?: {
-    code: string;
-    percentage: number;
-    expirationDate: Date;
-  };
-}
+import { CreateProductCommand } from './commands/create-product.command';
 
 @Injectable()
 export class CreateProductUseCase {
   constructor(private readonly productRepository: ProductRepositoryPort) {}
 
-  async execute(dto: CreateProductDto): Promise<Product> {
-    const discount = dto.discount
-      ? new ProductDiscount(dto.discount.code, dto.discount.percentage, dto.discount.expirationDate)
-      : undefined;
+  async execute(command: CreateProductCommand): Promise<Product> {
+    const { sku, name, description, price, stock, category, discount } = command;
+
+    let discountData: ProductDiscount | undefined;
+
+    if (discount) {
+      const { code, percentage, expirationDate } = discount;
+      discountData = new ProductDiscount(code, percentage, expirationDate);
+    }
 
     const product = new Product(
       Id.create(),
-      new Sku(dto.sku),
-      dto.name,
-      dto.description,
-      dto.price,
-      dto.stock,
-      dto.category,
+      new Sku(sku),
+      name,
+      description,
+      price,
+      stock,
+      category,
       true,
-      discount,
+      discountData,
     );
 
     return this.productRepository.save(product);

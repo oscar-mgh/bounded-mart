@@ -1,11 +1,13 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
+import { AuthModule } from './modules/auth/infrastructure/auth.module';
 import { CartModule } from './modules/cart/infrastructure/cart.module';
 import { CatalogModule } from './modules/catalog/infrastructure/catalog.module';
 import { HealthModule } from './modules/health/health.module';
 import { OrderModule } from './modules/order/infrastructure/order.module';
-import { UserModule } from './modules/auth/infrastructure/auth.module';
+import { SharedModule } from './modules/shared/shared.module';
+import { StoreModule } from './modules/store/infrastructure/store.module';
 
 @Module({
   imports: [
@@ -16,11 +18,13 @@ import { UserModule } from './modules/auth/infrastructure/auth.module';
       }),
       inject: [ConfigService],
     }),
-    UserModule,
+    AuthModule,
     CatalogModule,
     HealthModule,
     OrderModule,
     CartModule,
+    StoreModule,
+    SharedModule,
   ],
   controllers: [],
   providers: [],

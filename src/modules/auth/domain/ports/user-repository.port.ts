@@ -1,7 +1,7 @@
 import { User } from '../entities/user.entity';
 
 export abstract class UserRepositoryPort {
-  abstract save(user: User): Promise<void>;
+  abstract save(user: User): Promise<User>;
 
   abstract findByEmail(email: string): Promise<User | null>;
 

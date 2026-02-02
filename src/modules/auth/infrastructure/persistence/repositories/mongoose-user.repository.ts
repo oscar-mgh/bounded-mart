@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import { Model, Types } from 'mongoose';
 import { User } from '../../../domain/entities/user.entity';
 import { UserRepositoryPort } from '../../../domain/ports/user-repository.port';
 import { UserDocument } from '../entities/user.schema';
@@ -11,16 +11,18 @@ export class MongooseUserRepository implements UserRepositoryPort {
   constructor(
     @InjectModel(UserDocument.name)
     private readonly userModel: Model<UserDocument>,
-  ) { }
+  ) {}
 
-  async save(user: User): Promise<void> {
+  async save(user: User): Promise<User> {
     const persistenceData = UserMapper.toPersistence(user);
 
-    await this.userModel.findByIdAndUpdate(
-      persistenceData._id,
+    const updatedUser = await this.userModel.findByIdAndUpdate(
+      new Types.ObjectId(user.id.getValue()),
       persistenceData,
       { upsert: true, new: true },
     );
+
+    return UserMapper.toDomain(updatedUser);
   }
 
   async findByEmail(email: string): Promise<User | null> {

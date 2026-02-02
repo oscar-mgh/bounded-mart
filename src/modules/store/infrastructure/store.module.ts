@@ -3,6 +3,8 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { UserRepositoryPort } from 'src/modules/auth/domain/ports/user-repository.port';
 import { AuthModule } from 'src/modules/auth/infrastructure/auth.module';
 import { StoreIntegrationPort } from 'src/modules/catalog/domain/ports/store-integration.port';
+import { EntityFinderService } from 'src/modules/shared/application/services/entity-finder.service';
+import { SharedModule } from 'src/modules/shared/shared.module';
 import { StoreIntegrationAdapter } from 'src/modules/store/infrastructure/adapters/store-integration.adapter';
 import { MongooseStoreRepository } from 'src/modules/store/infrastructure/persistence/repositories/mongoose-store.repository';
 import { CreateStoreUseCase } from '../application/use-cases/create-store.use-case';
@@ -12,7 +14,6 @@ import { UpdateStoreUseCase } from '../application/use-cases/update-store.use-ca
 import { StoreRepositoryPort } from '../domain/ports/store-repository.port';
 import { StoreController } from './controllers/store.controller';
 import { StoreDocument, StoreSchema } from './persistence/entities/store.schema';
-import { EntityFinderService } from 'src/modules/shared/application/services/entity-finder.service';
 
 const useCases = [
   {
@@ -40,7 +41,7 @@ const useCases = [
 ];
 
 @Module({
-  imports: [MongooseModule.forFeature([{ name: StoreDocument.name, schema: StoreSchema }]), AuthModule],
+  imports: [MongooseModule.forFeature([{ name: StoreDocument.name, schema: StoreSchema }]), AuthModule, SharedModule],
   providers: [
     ...useCases,
     {

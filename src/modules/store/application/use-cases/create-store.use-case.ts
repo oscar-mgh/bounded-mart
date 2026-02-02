@@ -13,8 +13,8 @@ export class CreateStoreUseCase {
     private readonly userRepository: UserRepositoryPort,
   ) {}
 
-  async execute(command: CreateStoreCommand, adminId: string): Promise<Store> {
-    const user = await this.userRepository.findById(adminId);
+  async execute(command: CreateStoreCommand, userId: string): Promise<Store> {
+    const user = await this.userRepository.findById(userId);
     if (!user) {
       throw new NotFoundException('User not found');
     }
@@ -37,7 +37,7 @@ export class CreateStoreUseCase {
     });
 
     const storeId = Id.create();
-    const store = new Store(storeId, command.name, [new Id(adminId)], address, true, new Date(), new Date());
+    const store = new Store(storeId, command.name, [new Id(userId)], address, true, new Date(), new Date());
 
     user.assignStore(storeId);
 

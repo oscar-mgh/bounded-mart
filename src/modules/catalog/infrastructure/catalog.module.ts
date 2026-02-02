@@ -12,6 +12,7 @@ import { ProductRepositoryPort } from '../domain/ports/product-repository.port';
 import { ProductController } from './controllers/product.controller';
 import { ProductDocument, ProductSchema } from './persistence/entities/product.schema';
 import { MongooseProductRepository } from './persistence/repositories/mongoose-product.repository';
+import { EntityFinderService } from 'src/modules/shared/application/services/entity-finder.service';
 
 const useCases = [
   {
@@ -31,8 +32,8 @@ const useCases = [
   },
   {
     provide: FindProductByIdUseCase,
-    inject: [ProductRepositoryPort],
-    useFactory: (repo: ProductRepositoryPort) => new FindProductByIdUseCase(repo),
+    inject: [ProductRepositoryPort, EntityFinderService],
+    useFactory: (repo: ProductRepositoryPort, finder: EntityFinderService) => new FindProductByIdUseCase(repo, finder),
   },
   {
     provide: ApplyDiscountUseCase,

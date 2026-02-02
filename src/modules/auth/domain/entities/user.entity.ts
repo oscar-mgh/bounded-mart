@@ -40,14 +40,13 @@ export class User {
   }
 
   public assignStore(storeId: Id): void {
-    if (this.role === UserRole.CUSTOMER) {
-      throw new Error('Cannot assign store to a customer');
+    if (this.role === UserRole.SUPER_ADMIN) {
+      return;
     }
 
     if (this.storeId) {
       throw new Error('User already has a store assigned');
     }
-
     this.storeId = storeId;
     this.role = UserRole.SALES_ADMIN;
   }

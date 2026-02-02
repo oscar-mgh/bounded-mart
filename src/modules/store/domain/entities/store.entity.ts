@@ -58,7 +58,7 @@ export class Store {
   }
 
   public changeAddress(address: Address) {
-    this.address = address;
+    this.address = { ...this.address, ...address } as Address;
     this.updatedAt = new Date();
     this.validate();
   }

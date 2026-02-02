@@ -31,7 +31,7 @@ export class MongooseStoreRepository implements StoreRepositoryPort {
 
   async findByAdminId(adminId: string): Promise<Store[]> {
     const docs = await this.storeModel.find({ adminIds: adminId }).exec();
-    return docs.map((doc) => StoreMapper.toDomain(doc));
+    return docs.map((doc: StoreDocument) => StoreMapper.toDomain(doc));
   }
 
   async existsByName(name: string): Promise<boolean> {

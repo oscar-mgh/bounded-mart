@@ -42,6 +42,6 @@ export class MongooseStoreRepository implements StoreRepositoryPort {
   }
 
   async delete(id: string): Promise<void> {
-    await this.storeModel.findByIdAndDelete(id);
+    await this.storeModel.findByIdAndUpdate({ _id: id, active: true }, { active: false }).exec();
   }
 }

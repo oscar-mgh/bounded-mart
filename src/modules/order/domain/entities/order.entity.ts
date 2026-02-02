@@ -46,5 +46,6 @@ export class Order {
       throw new Error('Only pending orders can be cancelled');
     }
     this.status = OrderStatus.CANCELLED;
+    this.active = false;
   }
 }

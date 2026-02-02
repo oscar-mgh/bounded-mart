@@ -29,8 +29,8 @@ const useCases = [
   },
   {
     provide: DeleteStoreUseCase,
-    inject: [StoreRepositoryPort],
-    useFactory: (repo: StoreRepositoryPort) => new DeleteStoreUseCase(repo),
+    inject: [StoreRepositoryPort, EntityFinderService],
+    useFactory: (repo: StoreRepositoryPort, finder: EntityFinderService) => new DeleteStoreUseCase(repo, finder),
   },
   {
     provide: UpdateStoreUseCase,

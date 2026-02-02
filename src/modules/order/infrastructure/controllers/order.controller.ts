@@ -54,6 +54,6 @@ export class OrderController {
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
   async cancel(@Param('id', ValidateObjectIdPipe) id: string, @GetUser() user: User): Promise<void> {
-    await this.cancelOrderUseCase.execute({ orderId: id, userId: user.id.getValue() }, user.storeId?.getValue()!);
+    await this.cancelOrderUseCase.execute({ orderId: id, userId: user.id.toString() }, user.storeId?.toString()!);
   }
 }

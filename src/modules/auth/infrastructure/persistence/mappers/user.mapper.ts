@@ -25,7 +25,7 @@ export class UserMapper {
       password: domain.getPassword(),
       role: domain.getRole(),
       active: domain.isActive(),
-      storeId: domain.storeId?.getValue() ? new Types.ObjectId(domain.storeId.getValue()) : undefined,
+      storeId: domain.storeId?.getValue() ? new Types.ObjectId(domain.storeId.toString()) : undefined,
     };
   }
 }

@@ -4,6 +4,7 @@ import { CatalogModule } from 'src/modules/catalog/infrastructure/catalog.module
 import { CreateOrderUseCase } from 'src/modules/order/application/use-cases/create-order.use-case';
 import { CatalogIntegrationPort } from 'src/modules/order/domain/ports/catalog-integration.port';
 import { OrderModule } from 'src/modules/order/infrastructure/order.module';
+import { EntityFinderService } from 'src/modules/shared/application/services/entity-finder.service';
 import { AddToCartUseCase } from '../application/use-cases/add-to-cart.use-case';
 import { CheckoutUseCase } from '../application/use-cases/checkout.use-case';
 import { DeleteCartUseCase } from '../application/use-cases/delete-cart.use-case';
@@ -21,13 +22,13 @@ const useCases = [
   },
   {
     provide: FindCartByUserIdUseCase,
-    inject: [CartRepositoryPort],
-    useFactory: (repo: CartRepositoryPort) => new FindCartByUserIdUseCase(repo),
+    inject: [CartRepositoryPort, EntityFinderService],
+    useFactory: (repo: CartRepositoryPort, finder: EntityFinderService) => new FindCartByUserIdUseCase(repo, finder),
   },
   {
     provide: DeleteCartUseCase,
-    inject: [CartRepositoryPort],
-    useFactory: (repo: CartRepositoryPort) => new DeleteCartUseCase(repo),
+    inject: [CartRepositoryPort, EntityFinderService],
+    useFactory: (repo: CartRepositoryPort, finder: EntityFinderService) => new DeleteCartUseCase(repo, finder),
   },
   {
     provide: CheckoutUseCase,

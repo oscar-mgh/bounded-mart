@@ -30,16 +30,16 @@ export class CartController {
 
   @Post('items')
   @HttpCode(HttpStatus.CREATED)
-  async addItem(@GetUser('id') userId: string, @Body() dto: AddItemDto): Promise<CartResponseDto> {
+  async addItem(@GetUser('id') userId: string, @Body() dto: AddItemDto, @GetUser('storeId') storeId: string): Promise<CartResponseDto> {
     const { productId, quantity } = dto;
-    const cart = await this.addToCartUseCase.execute({ userId, productId, quantity });
+    const cart = await this.addToCartUseCase.execute({ userId, productId, quantity }, storeId);
     return CartMapper.toResponse(cart);
   }
 
   @Post('checkout')
   @HttpCode(HttpStatus.CREATED)
-  async checkout(@GetUser('id') userId: string): Promise<OrderResponseDto> {
-    const order = await this.checkoutUseCase.execute({ userId });
+  async checkout(@GetUser('id') userId: string, @GetUser('storeId') storeId: string): Promise<OrderResponseDto> {
+    const order = await this.checkoutUseCase.execute({ userId }, storeId);
     return OrderMapper.toResponse(order);
   }
 

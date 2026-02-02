@@ -6,6 +6,7 @@ export class Cart {
     public readonly id: Id,
     private readonly userId: string,
     private items: CartItem[] = [],
+    private active: boolean = true,
     private updatedAt: Date = new Date(),
   ) {}
 
@@ -23,6 +24,10 @@ export class Cart {
 
   public getTotalItems(): number {
     return this.items.reduce((total, item) => total + item.getQuantity(), 0);
+  }
+
+  public isActive(): boolean {
+    return this.active;
   }
 
   public updateProductQuantity(productId: string, newQuantity: number): void {

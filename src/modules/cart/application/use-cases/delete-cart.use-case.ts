@@ -1,19 +1,17 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
+import { EntityFinderService } from 'src/modules/shared/application/services/entity-finder.service';
 import { CartRepositoryPort } from '../../domain/ports/cart-repository.port';
 import { DeleteCartCommand } from './commands/delete-cart.command';
 
 @Injectable()
 export class DeleteCartUseCase {
-  constructor(private readonly cartRepository: CartRepositoryPort) {}
+  constructor(
+    private readonly cartRepository: CartRepositoryPort,
+    private readonly finderService: EntityFinderService,
+  ) {}
 
   async execute(command: DeleteCartCommand): Promise<void> {
-    const { userId } = command;
-    const cart = await this.cartRepository.findByUserId(userId);
-
-    if (!cart) {
-      throw new NotFoundException(`Cart for user ${userId} not found`);
-    }
-
-    await this.cartRepository.deleteByUserId(userId);
+    await this.finderService.findByUserOrThrow(this.cartRepository, command.userId, 'Cart');
+    await this.cartRepository.deleteByUserId(command.userId);
   }
 }

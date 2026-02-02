@@ -11,7 +11,7 @@ export class CheckoutUseCase {
     private readonly createOrderUseCase: CreateOrderUseCase,
   ) {}
 
-  async execute(command: CheckoutCommand): Promise<Order> {
+  async execute(command: CheckoutCommand, storeId: string): Promise<Order> {
     const cart = await this.cartRepository.findByUserId(command.userId);
     if (!cart || cart.getItems().length === 0) {
       throw new BadRequestException('Cannot checkout an empty cart');
@@ -22,10 +22,13 @@ export class CheckoutUseCase {
       quantity: item.getQuantity(),
     }));
 
-    const order = await this.createOrderUseCase.execute({
-      customerId: cart.getUserId(),
-      items: orderItemsDto,
-    });
+    const order = await this.createOrderUseCase.execute(
+      {
+        customerId: cart.getUserId(),
+        items: orderItemsDto,
+      },
+      storeId,
+    );
 
     await this.cartRepository.deleteByUserId(command.userId);
 

@@ -18,7 +18,6 @@ export class CartDocument extends Document {
   @Prop({ type: [SchemaFactory.createForClass(CartItemDocument)], default: [] })
   items: CartItemDocument[];
 
-  @Prop({ required: true })
   updatedAt: Date;
 }
 

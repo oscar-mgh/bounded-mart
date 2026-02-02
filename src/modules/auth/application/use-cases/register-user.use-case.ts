@@ -11,7 +11,7 @@ export class RegisterUserUseCase {
   constructor(
     private readonly userRepository: UserRepositoryPort,
     private readonly hasher: PasswordHasherPort,
-  ) { }
+  ) {}
 
   async execute(command: RegisterUserCommand): Promise<User> {
     const existing = await this.userRepository.findByEmail(command.email);
@@ -25,6 +25,8 @@ export class RegisterUserUseCase {
       new Email(command.email),
       hashedPassword,
       UserRole.CUSTOMER,
+      true,
+      command.storeId ? Id.create(command.storeId) : undefined,
     );
 
     await this.userRepository.save(newUser);

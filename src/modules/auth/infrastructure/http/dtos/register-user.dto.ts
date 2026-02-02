@@ -1,9 +1,4 @@
-import {
-  IsEmail,
-  IsString,
-  MaxLength,
-  MinLength
-} from 'class-validator';
+import { IsEmail, IsMongoId, IsString, MaxLength, MinLength } from 'class-validator';
 
 export class RegisterUserDto {
   @IsString()
@@ -17,4 +12,7 @@ export class RegisterUserDto {
   @IsString()
   @MinLength(8)
   password: string;
+
+  @IsMongoId()
+  storeId: string;
 }

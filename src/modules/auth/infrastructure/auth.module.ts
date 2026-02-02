@@ -24,9 +24,7 @@ import { BcryptHasher } from './security/bcrypt-hasher';
       }),
       inject: [ConfigService],
     }),
-    MongooseModule.forFeature([
-      { name: UserDocument.name, schema: UserSchema },
-    ]),
+    MongooseModule.forFeature([{ name: UserDocument.name, schema: UserSchema }]),
   ],
   providers: [
     RegisterUserUseCase,
@@ -40,9 +38,9 @@ import { BcryptHasher } from './security/bcrypt-hasher';
       useClass: BcryptHasher,
     },
     TokenService,
-    JwtStrategy
+    JwtStrategy,
   ],
   controllers: [AuthController],
   exports: [UserRepositoryPort, PassportModule, JwtModule],
 })
-export class UserModule { }
+export class AuthModule {}

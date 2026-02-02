@@ -15,11 +15,14 @@ export class User {
     private password: string,
     private role: UserRole = UserRole.CUSTOMER,
     private active: boolean = true,
+    public storeId?: Id,
   ) {
     if (this.username.length < 4 || this.username.length > 40) throw new Error('Invalid username');
-    if (!this.email.getValue().includes('@')) throw new Error('Invalid email');
   }
 
+  public getStoreId(): Id | undefined {
+    return this.storeId;
+  }
   public getUsername(): string {
     return this.username;
   }
@@ -34,5 +37,18 @@ export class User {
   }
   public isActive(): boolean {
     return this.active;
+  }
+
+  public assignStore(storeId: Id): void {
+    if (this.role === UserRole.CUSTOMER) {
+      throw new Error('Cannot assign store to a customer');
+    }
+
+    if (this.storeId) {
+      throw new Error('User already has a store assigned');
+    }
+
+    this.storeId = storeId;
+    this.role = UserRole.SALES_ADMIN;
   }
 }

@@ -6,7 +6,15 @@ import { UserDocument } from '../entities/user.schema';
 
 export class UserMapper {
   static toDomain(raw: UserDocument): User {
-    return new User(new Id(raw._id.toString()), raw.username, new Email(raw.email), raw.password, raw.role, raw.active);
+    return new User(
+      new Id(raw._id.toString()),
+      raw.username,
+      new Email(raw.email),
+      raw.password,
+      raw.role,
+      raw.active,
+      raw.storeId ? new Id(raw.storeId.toString()) : undefined,
+    );
   }
 
   static toPersistence(domain: User): Partial<UserDocument> {
@@ -17,6 +25,7 @@ export class UserMapper {
       password: domain.getPassword(),
       role: domain.getRole(),
       active: domain.isActive(),
+      storeId: domain.storeId?.getValue() ? new Types.ObjectId(domain.storeId.getValue()) : undefined,
     };
   }
 }

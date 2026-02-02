@@ -5,13 +5,14 @@ import { JwtPayload } from '../interfaces/jwt-payload.interface';
 
 @Injectable()
 export class TokenService {
-  constructor(private readonly jwtService: JwtService) { }
+  constructor(private readonly jwtService: JwtService) {}
 
   generateToken(user: User) {
     const payload: JwtPayload = {
       sub: user.id.getValue(),
       email: user.getEmail().getValue(),
       role: user.getRole(),
+      storeId: user.storeId?.getValue() ?? '',
     };
 
     return {

@@ -6,8 +6,8 @@ import { ProductRepositoryPort } from 'src/modules/catalog/domain/ports/product-
 export class CatalogIntegrationAdapter implements CatalogIntegrationPort {
   constructor(private readonly productRepository: ProductRepositoryPort) {}
 
-  async getProductsInfo(productIds: string[]): Promise<ProductStockInfo[]> {
-    const products = await Promise.all(productIds.map((id) => this.productRepository.findById(id)));
+  async getProductsInfo(productIds: string[], storeId: string): Promise<ProductStockInfo[]> {
+    const products = await Promise.all(productIds.map((id) => this.productRepository.findById(id, storeId)));
 
     return products
       .filter((p) => p !== null)
@@ -19,8 +19,8 @@ export class CatalogIntegrationAdapter implements CatalogIntegrationPort {
       }));
   }
 
-  async updateStock(productId: string, quantity: number): Promise<void> {
-    const product = await this.productRepository.findById(productId);
+  async updateStock(productId: string, quantity: number, storeId: string): Promise<void> {
+    const product = await this.productRepository.findById(productId, storeId);
     if (!product) return;
 
     const newStock = product.getStock() - quantity;

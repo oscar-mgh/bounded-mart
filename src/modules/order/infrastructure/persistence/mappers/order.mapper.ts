@@ -8,7 +8,14 @@ export class OrderMapper {
   static toDomain(doc: OrderDocument): Order {
     const items = doc.items.map((i) => new OrderItem(i.productId, i.productName, i.unitPrice, i.quantity));
 
-    return new Order(Id.create(doc._id.toString()), doc.customerId, items, doc.status as any, new Date(doc.createdAt));
+    return new Order(
+      Id.create(doc._id.toString()),
+      doc.customerId,
+      items,
+      doc.status as any,
+      true,
+      new Date(doc.createdAt),
+    );
   }
 
   static toPersistence(order: Order): any {
@@ -33,7 +40,7 @@ export class OrderMapper {
       status: order.getStatus(),
       totalAmount: order.getTotalAmount(),
       createdAt: order.getCreatedAt(),
-      items: order.getItems().map(item => ({
+      items: order.getItems().map((item) => ({
         productId: item.getProductId(),
         name: item.getProductName(),
         price: item.getUnitPrice(),
@@ -43,4 +50,3 @@ export class OrderMapper {
     };
   }
 }
-

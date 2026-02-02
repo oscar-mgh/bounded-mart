@@ -9,6 +9,7 @@ import { GetOrderUseCase } from '../../application/use-cases/get-order.use-case'
 import { CreateOrderDto } from '../http/create-order.dto';
 import { OrderResponseDto } from '../http/dtos/order-response.dto';
 import { OrderMapper } from '../persistence/mappers/order.mapper';
+import { User } from 'src/modules/auth/domain/entities/user.entity';
 
 @Controller('orders')
 @UseGuards(JwtAuthGuard)
@@ -22,11 +23,14 @@ export class OrderController {
 
   @Post()
   @HttpCode(HttpStatus.CREATED)
-  async create(@Body() dto: CreateOrderDto, @GetUser('id') userId: string): Promise<OrderResponseDto> {
-    const order = await this.createOrderUseCase.execute({
-      customerId: userId,
-      items: dto.items,
-    });
+  async create(@Body() dto: CreateOrderDto, @GetUser() user: User): Promise<OrderResponseDto> {
+    const order = await this.createOrderUseCase.execute(
+      {
+        customerId: user.id.toString(),
+        items: dto.items,
+      },
+      user.storeId?.toString()!,
+    );
     return OrderMapper.toResponse(order);
   }
 
@@ -49,7 +53,7 @@ export class OrderController {
 
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
-  async cancel(@Param('id', ValidateObjectIdPipe) id: string, @GetUser('id') userId: string): Promise<void> {
-    await this.cancelOrderUseCase.execute({ orderId: id, userId });
+  async cancel(@Param('id', ValidateObjectIdPipe) id: string, @GetUser() user: User): Promise<void> {
+    await this.cancelOrderUseCase.execute({ orderId: id, userId: user.id.getValue() }, user.storeId?.getValue()!);
   }
 }

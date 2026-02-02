@@ -8,6 +8,10 @@ export class ProductResponseDto {
 
   @IsString()
   @IsNotEmpty()
+  storeId: string;
+
+  @IsString()
+  @IsNotEmpty()
   @MaxLength(100)
   name: string;
 

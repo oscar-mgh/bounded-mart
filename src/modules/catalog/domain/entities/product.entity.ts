@@ -5,6 +5,7 @@ import { ProductDiscount } from '../value-objects/product-discount.vo';
 export class Product {
   constructor(
     public readonly id: Id,
+    public readonly storeId: Id,
     private sku: Sku,
     private name: string,
     private description: string,
@@ -18,26 +19,48 @@ export class Product {
   }
 
   private validate() {
-    if (this.name.length < 2 || this.name.length > 50)
-      throw new Error('Invalid name length');
+    if (this.name.length < 2 || this.name.length > 50) throw new Error('Invalid name length');
     if (this.price <= 0) throw new Error('Price must be positive');
     if (this.stock < 0) throw new Error('Stock cannot be negative');
   }
 
-  public getSku(): Sku { return this.sku; }
-  public getName(): string { return this.name; }
-  public getDescription(): string { return this.description; }
-  public getStock(): number { return this.stock; }
-  public isActive(): boolean { return this.active; }
-  public getPrice(): number { return this.price; }
-  public getCategory(): string { return this.category; }
-  public getDiscount(): ProductDiscount | undefined { return this.discount; }
+  public getStoreId(): Id {
+    return this.storeId;
+  }
+  public getSku(): Sku {
+    return this.sku;
+  }
+  public getName(): string {
+    return this.name;
+  }
+  public getDescription(): string {
+    return this.description;
+  }
+  public getStock(): number {
+    return this.stock;
+  }
+  public isActive(): boolean {
+    return this.active;
+  }
+  public getPrice(): number {
+    return this.price;
+  }
+  public getCategory(): string {
+    return this.category;
+  }
+  public getDiscount(): ProductDiscount | undefined {
+    return this.discount;
+  }
 
   public getFinalPrice(): number {
     if (this.discount) {
       return this.price - this.discount.getDiscountAmount(this.price);
     }
     return this.price;
+  }
+
+  public activate(): void {
+    this.active = true;
   }
 
   public deactivate(): void {

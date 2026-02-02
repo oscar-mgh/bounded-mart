@@ -1,10 +1,13 @@
-import { IsNumber, IsObject, IsOptional, IsString, MaxLength, Min, MinLength } from 'class-validator';
+import { IsMongoId, IsNumber, IsObject, IsOptional, IsString, MaxLength, Min, MinLength } from 'class-validator';
 
 export class CreateProductDto {
   @IsString()
   @MinLength(4)
   @MaxLength(40)
   sku: string;
+
+  @IsMongoId()
+  storeId: string;
 
   @MinLength(2)
   @MaxLength(50)

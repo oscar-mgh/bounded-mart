@@ -9,20 +9,15 @@ export interface ProductCriteria {
 }
 
 export abstract class ProductRepositoryPort {
+  abstract save(product: Product): Promise<Product>;
 
-    abstract save(product: Product): Promise<Product>;
+  abstract saveMany(products: Product[]): Promise<void>;
 
-    abstract saveMany(products: Product[]): Promise<void>;
-    
-    abstract findAll(page: number, limit: number): Promise<Page<Product>>;
+  abstract findAll(storeId: string, page: number, limit: number): Promise<Page<Product>>;
 
-    abstract findByCriteria(criteria: ProductCriteria): Promise<Product[]>;
-    
-    abstract findById(id: string): Promise<Product | null>;
-    
-    abstract findBySku(sku: string): Promise<Product | null>;
-    
-    abstract updateStock(id: string, quantity: number): Promise<Product>;
-    
-    abstract delete(id: string): Promise<void>;
+  abstract findByCriteria(criteria: ProductCriteria): Promise<Product[]>;
+
+  abstract findById(id: string, storeId: string): Promise<Product | null>;
+
+  abstract delete(id: string): Promise<void>;
 }

@@ -6,9 +6,9 @@ import { DeleteProductCommand } from './commands/delete-product.command';
 export class DeleteProductUseCase {
   constructor(private readonly productRepository: ProductRepositoryPort) {}
 
-  async execute(command: DeleteProductCommand): Promise<void> {
+  async execute(command: DeleteProductCommand, storeId: string): Promise<void> {
     const { id } = command;
-    const product = await this.productRepository.findById(id);
+    const product = await this.productRepository.findById(id, storeId);
 
     if (!product) {
       throw new NotFoundException(`Product with ID ${id} not found`);

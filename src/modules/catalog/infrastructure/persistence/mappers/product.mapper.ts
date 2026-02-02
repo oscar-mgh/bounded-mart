@@ -14,6 +14,7 @@ export class ProductMapper {
 
     return new Product(
       new Id(raw._id.toString()),
+      new Id(raw.storeId.toString()),
       new Sku(raw.sku),
       raw.name,
       raw.description,
@@ -30,6 +31,7 @@ export class ProductMapper {
 
     return {
       _id: domain.id.getValue(),
+      storeId: domain.storeId.getValue(),
       sku: domain.getSku().getValue(),
       name: domain.getName(),
       description: domain.getDescription(),
@@ -53,6 +55,7 @@ export class ProductMapper {
 
     return {
       id: product.id.getValue(),
+      storeId: product.storeId.getValue(),
       name: product.getName(),
       description: product.getDescription(),
       sku: product.getSku().getValue(),

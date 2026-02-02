@@ -14,45 +14,16 @@ export class MongooseProductRepository implements ProductRepositoryPort {
     private readonly productModel: Model<ProductDocument>,
   ) {}
 
-  async updateStock(id: string, quantity: number): Promise<Product> {
-    const updatedDoc = await this.productModel
-      .findByIdAndUpdate(id, { stock: quantity }, { new: true, runValidators: true })
-      .exec();
-
-    if (!updatedDoc) {
-      throw new Error(`Product with ID ${id} not found`);
-    }
-
-    return ProductMapper.toDomain(updatedDoc);
-  }
-
-  async findAll(page: number, limit: number): Promise<Page<Product>> {
-    const skip = (page - 1) * limit;
-
-    const filter = { active: true };
-
-    const [docs, totalElements] = await Promise.all([
-      this.productModel.find(filter).skip(skip).limit(limit).sort({ createdAt: -1 }).exec(),
-      this.productModel.countDocuments(filter).exec(),
-    ]);
-
-    return {
-      totalPages: Math.ceil(totalElements / limit),
-      data: docs.map((doc) => ProductMapper.toDomain(doc)),
-      totalElements,
-      page,
-    };
-  }
-
-  async findByCriteria(criteria: ProductCriteria): Promise<Product[]> {
+  async findByCriteria({ ids, skus, category, isActive }: ProductCriteria): Promise<Product[]> {
     const query: any = {};
+    const filter = { active: !!isActive };
 
-    if (criteria.ids) query._id = { $in: criteria.ids };
-    if (criteria.skus) query.sku = { $in: criteria.skus };
-    if (criteria.category) query.category = criteria.category;
+    if (ids) query._id = { $in: ids };
+    if (skus) query.sku = { $in: skus };
+    if (category) query.category = category;
 
-    const docs = await this.productModel.find(query).exec();
-    return docs.map((doc) => ProductMapper.toDomain(doc));
+    const products = await this.productModel.find({ ...query, ...filter }).exec();
+    return products.map((doc) => ProductMapper.toDomain(doc));
   }
 
   async saveMany(products: Product[]): Promise<void> {
@@ -70,27 +41,44 @@ export class MongooseProductRepository implements ProductRepositoryPort {
     try {
       const persistance = ProductMapper.toPersistence(product);
       const doc = await this.productModel
-        .findByIdAndUpdate(persistance._id, persistance, { upsert: true, new: true })
+        .findOneAndUpdate(
+          { _id: persistance._id, storeId: persistance.storeId },
+          { $set: persistance },
+          { upsert: true, new: true },
+        )
         .exec();
       return ProductMapper.toDomain(doc);
     } catch (error) {
       if (error.code === 11000) {
-        throw new ConflictException('Product with this SKU already exists');
+        throw new ConflictException('SKU already exists in your store');
       }
       throw error;
     }
   }
 
-  async findBySku(sku: string): Promise<Product | null> {
-    const doc = await this.productModel.findOne({ sku, active: true }).exec();
-    if (!doc) return null;
-    return ProductMapper.toDomain(doc);
+  async findById(id: string, storeId?: string): Promise<Product | null> {
+    const query: any = { _id: id, active: true };
+    if (storeId) query.storeId = storeId;
+
+    const doc = await this.productModel.findOne(query).exec();
+    return doc ? ProductMapper.toDomain(doc) : null;
   }
 
-  async findById(id: string): Promise<Product | null> {
-    const doc = await this.productModel.findOne({ _id: id, active: true }).exec();
-    if (!doc) return null;
-    return ProductMapper.toDomain(doc);
+  async findAll(storeId: string, page: number, limit: number): Promise<Page<Product>> {
+    const skip = (page - 1) * limit;
+    const filter = { storeId, active: true };
+
+    const [docs, totalElements] = await Promise.all([
+      this.productModel.find(filter).skip(skip).limit(limit).sort({ createdAt: -1 }).exec(),
+      this.productModel.countDocuments(filter).exec(),
+    ]);
+
+    return {
+      totalPages: Math.ceil(totalElements / limit),
+      data: docs.map((doc) => ProductMapper.toDomain(doc)),
+      totalElements,
+      page,
+    };
   }
 
   async delete(id: string): Promise<void> {

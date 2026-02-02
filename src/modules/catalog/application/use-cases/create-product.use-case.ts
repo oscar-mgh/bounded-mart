@@ -10,7 +10,7 @@ import { CreateProductCommand } from './commands/create-product.command';
 export class CreateProductUseCase {
   constructor(private readonly productRepository: ProductRepositoryPort) {}
 
-  async execute(command: CreateProductCommand): Promise<Product> {
+  async execute(command: CreateProductCommand, storeId: string): Promise<Product> {
     const { sku, name, description, price, stock, category, discount } = command;
 
     let discountData: ProductDiscount | undefined;
@@ -22,6 +22,7 @@ export class CreateProductUseCase {
 
     const product = new Product(
       Id.create(),
+      new Id(storeId),
       new Sku(sku),
       name,
       description,

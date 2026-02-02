@@ -2,6 +2,7 @@ import {
   Body,
   Controller,
   Delete,
+  ForbiddenException,
   Get,
   HttpCode,
   HttpStatus,
@@ -11,7 +12,8 @@ import {
   Query,
   UseGuards,
 } from '@nestjs/common';
-import { UserRole } from 'src/modules/auth/domain/entities/user.entity';
+import { User, UserRole } from 'src/modules/auth/domain/entities/user.entity';
+import { GetUser } from 'src/modules/auth/infrastructure/auth/decorators/get-user.decorator';
 import { Roles } from 'src/modules/auth/infrastructure/auth/decorators/roles.decorator';
 import { JwtAuthGuard } from 'src/modules/auth/infrastructure/auth/guards/jwt-auth.guard';
 import { RolesGuard } from 'src/modules/auth/infrastructure/auth/guards/roles.guard';
@@ -21,16 +23,15 @@ import { ApplyDiscountCommand } from '../../application/use-cases/commands/apply
 import { CreateProductUseCase } from '../../application/use-cases/create-product.use-case';
 import { DeleteProductUseCase } from '../../application/use-cases/delete-product.use-case';
 import { FindAllProductsUseCase } from '../../application/use-cases/find-all-products.use-case';
+import { FindByCriteriaUseCase } from '../../application/use-cases/find-by-criteria-use-case';
 import { FindProductByIdUseCase } from '../../application/use-cases/find-product-by-id.use-case';
-import { FindProductBySkuUseCase } from '../../application/use-cases/find-product-by-sku.use-case';
 import { ApplyDiscountResponseDto } from '../http/dtos/apply-discount-response.dto';
 import { ApplyDiscountDto } from '../http/dtos/apply-discount.dto';
 import { CreateProductDto } from '../http/dtos/create-product.dto';
+import { CriteriaQueryDto } from '../http/dtos/criteria-query.dto';
 import { PaginatedResult, PaginationQueryDto } from '../http/dtos/pagination.dto';
 import { ProductResponseDto } from '../http/dtos/product-response.dto';
-import { UpdateStockQueryDto } from '../http/dtos/update-stock.dto';
 import { ProductMapper } from '../persistence/mappers/product.mapper';
-import { UpdateStockUseCase } from './../../application/use-cases/update-stock.use-case';
 
 @Controller('products')
 @UseGuards(JwtAuthGuard)
@@ -38,17 +39,19 @@ export class ProductController {
   constructor(
     private readonly findAllProductsUseCase: FindAllProductsUseCase,
     private readonly findProductByIdUseCase: FindProductByIdUseCase,
-    private readonly findProductBySkuUseCase: FindProductBySkuUseCase,
     private readonly createProductUseCase: CreateProductUseCase,
-    private readonly updateStockUseCase: UpdateStockUseCase,
     private readonly deleteProductUseCase: DeleteProductUseCase,
     private readonly applyDiscountUseCase: ApplyDiscountUseCase,
+    private readonly findByCriteriaUseCase: FindByCriteriaUseCase,
   ) {}
 
   @Get()
   @HttpCode(HttpStatus.OK)
-  async findAll(@Query() query: PaginationQueryDto): Promise<PaginatedResult<ProductResponseDto>> {
-    const { page, totalElements, totalPages, data } = await this.findAllProductsUseCase.execute(query);
+  async findAll(
+    @Query() query: PaginationQueryDto,
+    @GetUser('storeId') storeId: string,
+  ): Promise<PaginatedResult<ProductResponseDto>> {
+    const { page, totalElements, totalPages, data } = await this.findAllProductsUseCase.execute(query, storeId);
 
     return {
       page,
@@ -58,41 +61,36 @@ export class ProductController {
     };
   }
 
-  @Get(':id')
+  @Get('criteria')
   @HttpCode(HttpStatus.OK)
-  async findById(@Param('id', ValidateObjectIdPipe) id: string): Promise<ProductResponseDto> {
-    const product = await this.findProductByIdUseCase.execute({ id });
-    return ProductMapper.toResponse(product);
+  async findByCriteria(@Query() query: CriteriaQueryDto): Promise<ProductResponseDto[]> {
+    const products = await this.findByCriteriaUseCase.execute(query);
+    return products.map((product) => ProductMapper.toResponse(product));
   }
 
-  @Get(':sku')
+  @Get(':id')
   @HttpCode(HttpStatus.OK)
-  async findBySku(@Param('sku') sku: string): Promise<ProductResponseDto> {
-    const product = await this.findProductBySkuUseCase.execute({ sku });
+  async findById(
+    @Param('id', ValidateObjectIdPipe) id: string,
+    @GetUser('storeId') storeId: string,
+  ): Promise<ProductResponseDto> {
+    const product = await this.findProductByIdUseCase.execute({ id }, storeId);
     return ProductMapper.toResponse(product);
   }
 
   @Post()
   @UseGuards(RolesGuard)
-  @Roles(UserRole.SALES_ADMIN)
+  @Roles(UserRole.SALES_ADMIN, UserRole.SUPER_ADMIN)
   @HttpCode(HttpStatus.CREATED)
-  async create(@Body() dto: CreateProductDto): Promise<ProductResponseDto> {
-    const product = await this.createProductUseCase.execute(dto);
-    return ProductMapper.toResponse(product);
-  }
-
-  @Patch(':id')
-  @UseGuards(RolesGuard)
-  @Roles(UserRole.SALES_ADMIN)
-  @HttpCode(HttpStatus.OK)
-  async updateStock(@Query() dto: UpdateStockQueryDto): Promise<ProductResponseDto> {
-    const product = await this.updateStockUseCase.execute(dto);
+  async create(@Body() dto: CreateProductDto, @GetUser() user: User): Promise<ProductResponseDto> {
+    if (!user.storeId) throw new ForbiddenException('User must be associated with a store to create a product');
+    const product = await this.createProductUseCase.execute(dto, user.storeId.toString());
     return ProductMapper.toResponse(product);
   }
 
   @Patch('apply-discount')
   @UseGuards(RolesGuard)
-  @Roles(UserRole.SALES_ADMIN)
+  @Roles(UserRole.SALES_ADMIN, UserRole.SUPER_ADMIN)
   @HttpCode(HttpStatus.OK)
   async applyDiscount(@Body() dto: ApplyDiscountDto): Promise<ApplyDiscountResponseDto> {
     const { ids, category, code, percentage, expirationDate } = dto;
@@ -118,9 +116,9 @@ export class ProductController {
 
   @Delete(':id')
   @UseGuards(RolesGuard)
-  @Roles(UserRole.SALES_ADMIN)
+  @Roles(UserRole.SALES_ADMIN, UserRole.SUPER_ADMIN)
   @HttpCode(HttpStatus.NO_CONTENT)
-  async remove(@Param('id', ValidateObjectIdPipe) id: string): Promise<void> {
-    return await this.deleteProductUseCase.execute({ id });
+  async remove(@Param('id', ValidateObjectIdPipe) id: string, @GetUser('storeId') storeId: string): Promise<void> {
+    return await this.deleteProductUseCase.execute({ id }, storeId);
   }
 }

@@ -3,6 +3,8 @@ import { Document } from 'mongoose';
 
 @Schema({ collection: 'products', timestamps: true })
 export class ProductDocument extends Document {
+  @Prop({ required: true, index: true })
+  storeId: string;
   @Prop({ unique: true, required: true }) sku: string;
   @Prop({ required: true }) name: string;
   @Prop() description: string;

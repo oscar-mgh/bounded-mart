@@ -1,5 +1,7 @@
 export interface ApplyDiscountCommand {
   criteria: {
+    limit?: number;
+    page?: number;
     ids?: string[];
     skus?: string[];
     category?: string;

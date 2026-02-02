@@ -1,5 +1,6 @@
 export interface ProductPersistenceDto {
   readonly _id: string;
+  readonly storeId: string;
   readonly sku: string;
   readonly name: string;
   readonly description: string;

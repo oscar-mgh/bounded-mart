@@ -1,8 +1,9 @@
 import { Body, Controller, Delete, Get, HttpCode, HttpStatus, Post, UseGuards } from '@nestjs/common';
-import { OrderResponseDto } from 'src/modules/order/infrastructure/http/dtos/order-response.dto';
-import { OrderMapper } from 'src/modules/order/infrastructure/persistence/mappers/order.mapper';
 import { GetUser } from 'src/modules/auth/infrastructure/auth/decorators/get-user.decorator';
 import { JwtAuthGuard } from 'src/modules/auth/infrastructure/auth/guards/jwt-auth.guard';
+import { OrderResponseDto } from 'src/modules/order/infrastructure/http/dtos/order-response.dto';
+import { OrderMapper } from 'src/modules/order/infrastructure/persistence/mappers/order.mapper';
+import { ValidateObjectIdPipe } from 'src/modules/shared/infrastructure/pipes/validate-object-id.pipe';
 import { AddToCartUseCase } from '../../application/use-cases/add-to-cart.use-case';
 import { CheckoutUseCase } from '../../application/use-cases/checkout.use-case';
 import { DeleteCartUseCase } from '../../application/use-cases/delete-cart.use-case';
@@ -23,14 +24,18 @@ export class CartController {
 
   @Get()
   @HttpCode(HttpStatus.OK)
-  async findCartByUserId(@GetUser('id') userId: string): Promise<CartResponseDto> {
+  async findCartByUserId(@GetUser('id', ValidateObjectIdPipe) userId: string): Promise<CartResponseDto> {
     const cart = await this.findCartByUserIdUseCase.execute({ userId });
     return CartMapper.toResponse(cart);
   }
 
   @Post('items')
   @HttpCode(HttpStatus.CREATED)
-  async addItem(@GetUser('id') userId: string, @Body() dto: AddItemDto, @GetUser('storeId') storeId: string): Promise<CartResponseDto> {
+  async addItem(
+    @GetUser('id') userId: string,
+    @Body() dto: AddItemDto,
+    @GetUser('storeId', ValidateObjectIdPipe) storeId: string,
+  ): Promise<CartResponseDto> {
     const { productId, quantity } = dto;
     const cart = await this.addToCartUseCase.execute({ userId, productId, quantity }, storeId);
     return CartMapper.toResponse(cart);
@@ -38,14 +43,17 @@ export class CartController {
 
   @Post('checkout')
   @HttpCode(HttpStatus.CREATED)
-  async checkout(@GetUser('id') userId: string, @GetUser('storeId') storeId: string): Promise<OrderResponseDto> {
+  async checkout(
+    @GetUser('id', ValidateObjectIdPipe) userId: string,
+    @GetUser('storeId') storeId: string,
+  ): Promise<OrderResponseDto> {
     const order = await this.checkoutUseCase.execute({ userId }, storeId);
     return OrderMapper.toResponse(order);
   }
 
   @Delete()
   @HttpCode(HttpStatus.NO_CONTENT)
-  async deleteCart(@GetUser('id') userId: string): Promise<void> {
+  async deleteCart(@GetUser('id', ValidateObjectIdPipe) userId: string): Promise<void> {
     await this.deleteCartUseCase.execute({ userId });
   }
 }

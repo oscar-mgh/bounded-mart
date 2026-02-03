@@ -3,6 +3,7 @@ import { UserRole } from 'src/modules/auth/domain/entities/user.entity';
 import { GetUser } from 'src/modules/auth/infrastructure/auth/decorators/get-user.decorator';
 import { Roles } from 'src/modules/auth/infrastructure/auth/decorators/roles.decorator';
 import { JwtAuthGuard } from 'src/modules/auth/infrastructure/auth/guards/jwt-auth.guard';
+import { ValidateObjectIdPipe } from 'src/modules/shared/infrastructure/pipes/validate-object-id.pipe';
 import { CreateStoreUseCase } from '../../application/use-cases/create-store.use-case';
 import { DeleteStoreUseCase } from '../../application/use-cases/delete-store.use-case';
 import { FindStoreByIdUseCase } from '../../application/use-cases/find-store-by-id.use-case';
@@ -28,7 +29,7 @@ export class StoreController {
 
   @Get(':id')
   @HttpCode(HttpStatus.OK)
-  async findById(@Param('id') id: string): Promise<StoreResponseDto> {
+  async findById(@Param('id', ValidateObjectIdPipe) id: string): Promise<StoreResponseDto> {
     const store = await this.findByIdUseCase.execute(id);
     return StoreMapper.toResponse(store);
   }
@@ -36,7 +37,7 @@ export class StoreController {
   @Delete(':id')
   @Roles(UserRole.SUPER_ADMIN)
   @HttpCode(HttpStatus.NO_CONTENT)
-  delete(@Param('id') id: string): Promise<void> {
+  delete(@Param('id', ValidateObjectIdPipe) id: string): Promise<void> {
     return this.deleteUseCase.execute(id);
   }
 }

@@ -70,11 +70,8 @@ export class ProductController {
 
   @Get(':id')
   @HttpCode(HttpStatus.OK)
-  async findById(
-    @Param('id', ValidateObjectIdPipe) id: string,
-    @GetUser('storeId', ValidateObjectIdPipe) storeId: string,
-  ): Promise<ProductResponseDto> {
-    const product = await this.findProductByIdUseCase.execute({ id }, storeId);
+  async findById(@Param('id', ValidateObjectIdPipe) id: string): Promise<ProductResponseDto> {
+    const product = await this.findProductByIdUseCase.execute({ id });
     return ProductMapper.toResponse(product);
   }
 
@@ -118,7 +115,7 @@ export class ProductController {
   @UseGuards(RolesGuard)
   @Roles(UserRole.SALES_ADMIN, UserRole.SUPER_ADMIN)
   @HttpCode(HttpStatus.NO_CONTENT)
-  async delete(@Param('id', ValidateObjectIdPipe) id: string, @GetUser('storeId') storeId: string): Promise<void> {
-    return await this.deleteProductUseCase.execute({ id }, storeId);
+  async delete(@Param('id', ValidateObjectIdPipe) id: string): Promise<void> {
+    return await this.deleteProductUseCase.execute({ id });
   }
 }

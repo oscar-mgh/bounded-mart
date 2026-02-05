@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { AuthModule } from 'src/modules/auth/infrastructure/auth.module';
+import { EntityFinderService } from 'src/modules/shared/application/services/entity-finder.service';
 import { StoreModule } from 'src/modules/store/infrastructure/store.module';
 import { ApplyDiscountUseCase } from '../application/use-cases/apply-discount.use-case';
 import { CreateProductUseCase } from '../application/use-cases/create-product.use-case';
@@ -12,7 +13,6 @@ import { ProductRepositoryPort } from '../domain/ports/product-repository.port';
 import { ProductController } from './controllers/product.controller';
 import { ProductDocument, ProductSchema } from './persistence/entities/product.schema';
 import { MongooseProductRepository } from './persistence/repositories/mongoose-product.repository';
-import { EntityFinderService } from 'src/modules/shared/application/services/entity-finder.service';
 
 const useCases = [
   {
@@ -22,8 +22,8 @@ const useCases = [
   },
   {
     provide: DeleteProductUseCase,
-    inject: [ProductRepositoryPort],
-    useFactory: (repo: ProductRepositoryPort) => new DeleteProductUseCase(repo),
+    inject: [ProductRepositoryPort, EntityFinderService],
+    useFactory: (repo: ProductRepositoryPort, finder: EntityFinderService) => new DeleteProductUseCase(repo, finder),
   },
   {
     provide: FindAllProductsUseCase,

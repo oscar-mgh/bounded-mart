@@ -1,20 +1,18 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
+import { EntityFinderService } from 'src/modules/shared/application/services/entity-finder.service';
 import { ProductRepositoryPort } from '../../domain/ports/product-repository.port';
 import { DeleteProductCommand } from './commands/delete-product.command';
 
 @Injectable()
 export class DeleteProductUseCase {
-  constructor(private readonly productRepository: ProductRepositoryPort) {}
+  constructor(
+    private readonly productRepository: ProductRepositoryPort,
+    private readonly finderService: EntityFinderService,
+  ) {}
 
-  async execute(command: DeleteProductCommand, storeId: string): Promise<void> {
-    const { id } = command;
-    const product = await this.productRepository.findById(id, storeId);
-
-    if (!product) {
-      throw new NotFoundException(`Product with ID ${id} not found`);
-    }
-
+  async execute(command: DeleteProductCommand): Promise<void> {
+    const product = await this.finderService.findOrThrow(this.productRepository, command.id, 'Product');
     product.deactivate();
-    await this.productRepository.delete(id);
+    await this.productRepository.delete(command.id);
   }
 }

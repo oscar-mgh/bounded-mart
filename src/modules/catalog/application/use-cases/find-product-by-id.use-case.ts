@@ -11,7 +11,7 @@ export class FindProductByIdUseCase {
     private readonly finderService: EntityFinderService,
   ) {}
 
-  async execute(query: FindProductByIdQuery, storeId: string): Promise<Product> {
-    return this.finderService.findOrThrow(this.productRepository, query.id, 'Product', { storeId });
+  async execute(query: FindProductByIdQuery): Promise<Product> {
+    return this.finderService.findOrThrow(this.productRepository, query.id, 'Product');
   }
 }

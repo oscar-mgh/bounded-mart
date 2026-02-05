@@ -17,7 +17,7 @@ export abstract class ProductRepositoryPort {
 
   abstract findByCriteria(criteria: ProductCriteria): Promise<Product[]>;
 
-  abstract findById(id: string, storeId: string): Promise<Product | null>;
+  abstract findById(id: string): Promise<Product | null>;
 
   abstract delete(id: string): Promise<void>;
 }

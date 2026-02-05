@@ -56,9 +56,8 @@ export class MongooseProductRepository implements ProductRepositoryPort {
     }
   }
 
-  async findById(id: string, storeId?: string): Promise<Product | null> {
+  async findById(id: string): Promise<Product | null> {
     const query: any = { _id: id, active: true };
-    if (storeId) query.storeId = storeId;
 
     const doc = await this.productModel.findOne(query).exec();
     return doc ? ProductMapper.toDomain(doc) : null;

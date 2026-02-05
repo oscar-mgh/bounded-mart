@@ -1,6 +1,5 @@
-import { NotFoundException } from '@nestjs/common';
-import { StoreRepositoryPort } from '../../domain/ports/store-repository.port';
 import { EntityFinderService } from 'src/modules/shared/application/services/entity-finder.service';
+import { StoreRepositoryPort } from '../../domain/ports/store-repository.port';
 
 export class DeleteStoreUseCase {
   constructor(

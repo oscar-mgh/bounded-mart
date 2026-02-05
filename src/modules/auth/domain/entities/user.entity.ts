@@ -38,6 +38,12 @@ export class User {
   public isActive(): boolean {
     return this.active;
   }
+  public activate() {
+    this.active = true;
+  }
+  public deactivate() {
+    this.active = false;
+  }
 
   public assignStore(storeId: Id): void {
     if (this.role === UserRole.SUPER_ADMIN) {

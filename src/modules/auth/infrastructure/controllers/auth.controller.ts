@@ -1,6 +1,10 @@
-import { Body, Controller, HttpCode, HttpStatus, Post } from '@nestjs/common';
+import { Body, Controller, Delete, HttpCode, HttpStatus, Param, Post } from '@nestjs/common';
+import { ValidateObjectIdPipe } from 'src/modules/shared/infrastructure/pipes/validate-object-id.pipe';
+import { DisableUserUseCase } from '../../application/use-cases/disable-user.use-case';
 import { LoginUseCase } from '../../application/use-cases/login-user.use-case';
 import { RegisterUserUseCase } from '../../application/use-cases/register-user.use-case';
+import { UserRole } from '../../domain/entities/user.entity';
+import { Roles } from '../auth/decorators/roles.decorator';
 import { TokenService } from '../auth/services/token.service';
 import { LoginDto } from '../http/dtos/login.dto';
 import { RegisterUserDto } from '../http/dtos/register-user.dto';
@@ -12,6 +16,7 @@ export class AuthController {
     private readonly registerUserUseCase: RegisterUserUseCase,
     private readonly loginUseCase: LoginUseCase,
     private readonly tokenService: TokenService,
+    private readonly disableUserUseCase: DisableUserUseCase,
   ) {}
 
   @Post('register')
@@ -28,5 +33,12 @@ export class AuthController {
     const user = await this.loginUseCase.execute(dto);
     const token = this.tokenService.generateToken(user);
     return { ...UserResponseDto.fromDomain(user), token: token.access_token };
+  }
+
+  @Delete('disable/:userId')
+  @Roles(UserRole.SUPER_ADMIN)
+  @HttpCode(HttpStatus.NO_CONTENT)
+  async disableUser(@Param('userId', ValidateObjectIdPipe) userId: string): Promise<void> {
+    await this.disableUserUseCase.execute(userId);
   }
 }
